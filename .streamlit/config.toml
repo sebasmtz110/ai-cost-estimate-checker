@@ -1,0 +1,14 @@
+[theme]
+base = "dark"
+primaryColor = "#F5A524"            # construction amber accent
+backgroundColor = "#0B1220"         # deep navy
+secondaryBackgroundColor = "#131C2E" # slate panels
+textColor = "#E2E8F0"
+font = "sans serif"
+
+[server]
+headless = true
+maxUploadSize = 25
+
+[browser]
+gatherUsageStats = false

@@ -1,54 +1,64 @@
 # Walkthrough (plain English)
 
+## The big picture
+You give the app a construction repair estimate (a spreadsheet-style CSV or a PDF). For every line it asks: *"Is this price normal?"* Lines that look too expensive or too cheap get a flag, a severity (High / Medium / Low), a sentence explaining why, and a dollar impact. Then an AI writes a short reviewer memo for each estimate.
+
 ## The files
-**`generate_sample_data.py`** – Makes the fake practice data. It has a list of 22 repair items (drywall, roofing, water heater…) with a made-up "typical" price for each. It then creates 8 fictional estimates, wiggling each price a little (±8%) so they look realistic, and plants 6 deliberate pricing problems (like a roof priced 85% too high) so we can check that the tool catches them.
+**`generate_sample_data.py`**: makes the fake practice data. It has a list of 22 repair items (drywall, roofing, water heater…) with a made-up "typical" price for each. It creates 8 fictional estimates, wiggles each price a little (about ±8%) so they look realistic, and plants 6 deliberate pricing problems (like a roof priced 85% too high) so we can prove the tool catches them.
 
-**`data/reference_unit_costs.csv`** – The "price book": what each item should roughly cost per unit (SF = square foot, LF = linear foot, EA = each, SQ = roofing square, LD = load).
+**`data/reference_unit_costs.csv`**: the "price book", i.e. what each item should roughly cost per unit (SF = square foot, LF = linear foot, EA = each, SQ = roofing square, LD = load).
 
-**`data/sample_estimates.csv`** – The estimates to review. One row per line item.
+**`data/sample_estimates.csv`**: the estimates to review, one row per line item.
 
-**`checker.py`** – The brain. For every line it:
-1. Compares the price to the price book (% above/below).
-2. Compares it to the same item on the other estimates. A *z-score* says how many "standard deviations" away from average it is; *IQR* is a similar test based on the middle 50% of prices.
-3. Runs an *IsolationForest*, a machine learning model that finds rows that are easy to "isolate" from the rest — i.e., weird ones.
-4. Flags the line if it's far off the price book or if two checks agree, and writes a sentence explaining why.
+**`checker.py`**: the brain. First it **cleans the data**: it recognises different column names ("Description" means item), turns text like `$1,200.00` into numbers, and sets aside bad rows (blank item, letters instead of numbers, zero or negative prices) so they don't break anything. Then for every line it:
+1. Compares the price to the price book, but only if the **unit** matches too (a price per square yard can't be compared to a price per square foot).
+2. Compares it to the same item on the **other** estimates. A *z-score* says how many "standard deviations" it is from the others' average; *IQR* is a similar test using the middle 50% of prices. The line is left out of its own comparison, otherwise a real outlier would hide itself by pulling the average toward it. This needs at least 4 other estimates.
+3. Runs an *IsolationForest*, a machine-learning model that finds rows that are easy to "isolate" from the rest, i.e. the weird ones.
+4. Flags the line if it's more than 25% off the price book, or if two checks agree. It then gives a severity: **High** = 50%+ off or $5,000+ at stake, **Medium** = 25%+, **Low** = the rest.
 
-The settings at the top (`REF_PCT_THRESHOLD`, etc.) control how strict it is.
+The settings at the top (`REF_PCT_THRESHOLD`, `Z_THRESHOLD`, etc.) control how strict it is.
 
-**`app.py`** – The website. Streamlit turns Python into a web page: sidebar to upload a file, metric cards across the top, a table of flagged items, and a scatter chart (dots far from the dashed line are priced far from the reference).
+**`reviewer.py`**: writes the "reviewer note" for one estimate, like a short memo a cost reviewer would send: overall verdict, biggest problems, dollars at stake, next steps. It tries **Google Gemini** (free) first, then **OpenAI** (only if you have that key), then a fill-in-the-blanks **template**. The AI gets only the checker's numbers and is told not to make anything up. It's also told how strong the wording should be, so one flagged line doesn't get called a disaster. If only one estimate is loaded, the note says peer comparison wasn't possible. If no key is set, or a key is wrong, it quietly uses the template, so the app never breaks.
 
-**`reviewer.py`**: writes the "reviewer note" for one estimate, like a short memo a cost reviewer would send: overall verdict, the biggest problems, how many dollars are at stake, and what to do next. It tries, in order: **Google Gemini** (free), then **OpenAI** (only if you have that key), then a fill-in-the-blanks **template**. The AI gets only the checker's numbers and is told not to make any up. If no key is set, or a key is wrong, it quietly uses the template, so the app never breaks. The app shows which one wrote the note ("Generated by: …").
+**`pdf_parser.py`**: lets you upload a PDF estimate. It uses `pdfplumber` to find the table, works out which column is which ("UOM" = unit, "Unit Price" = unit cost), handles tables that continue onto the next page, and skips "Total" rows. Scanned PDFs (pictures of paper) don't contain text, so they can't be read.
 
-**`pdf_parser.py`** – Lets you upload a PDF estimate. It uses `pdfplumber` to find the table in the PDF, then figures out which column is which even if the names differ ("Description" = item, "UOM" = unit, "Unit Price" = unit cost). It also strips `$` and commas so prices become numbers.
+**`make_sample_pdf.py`**: makes `data/sample_estimate.pdf`, a fake estimate PDF (stamped as synthetic) for testing the upload.
 
-**`make_sample_pdf.py`** – Makes `data/sample_estimate.pdf`, a fake estimate PDF (stamped as synthetic) to test the upload with.
+**`app.py`**: the website. Streamlit turns Python into a web page. It has a hero banner at the top, 5 summary "KPI cards", and 4 tabs:
+- **AI reviewer**: pick an estimate and read its memo
+- **Flagged items**: table with colored severity badges, filterable by severity
+- **Analytics**: scatter chart of price vs. expected price (dots outside the dotted ±25% band are suspicious) plus a bar chart of dollar impact by trade
+- **Data**: every line, any skipped rows, and a download button
 
-**`tests_smoke.py`** – A quick check that nothing is broken. Run `python tests_smoke.py`. It should print `ALL SMOKE TESTS PASSED`.
+**`ui.py`**: the look of the app: colors (dark navy with a construction-amber accent), the CSS styling, the KPI cards, badges and the flagged table.
 
-**`capture_screenshots.py`** – Opens the app in an invisible browser and saves the pictures used in the README (`docs/screenshots/`).
+**`.streamlit/config.toml`**: Streamlit's theme settings (background color, accent color, font).
 
-**`requirements.txt`** – The list of Python libraries to install.
+**`tests_smoke.py`, `tests_edge_cases.py`, `tests_llm_fallback.py`**: automatic checks. Run each with `python <file>`. Each should end with `... PASSED`. The edge-case tests throw bad data at the checker (missing columns, letters in number columns, zero prices, unknown items, a broken PDF) and make sure it handles them politely.
+
+**`capture_screenshots.py`**: opens the app in an invisible browser, clicks through every tab, tries good and bad uploads, and saves the README pictures to `docs/screenshots/`.
+
+**`requirements.txt` / `requirements-dev.txt`**: the Python libraries to install. The dev file adds the screenshot tool.
 
 ## Using a free AI key (optional)
 1. Go to **https://aistudio.google.com/app/apikey**, sign in with a Google account, and click **Create API key**. Copy it. (The free tier costs nothing. Google may use free-tier requests to improve its products, which is fine here because the data is synthetic.)
 2. Tell your computer about it (only for the current terminal window):
    - Mac/Linux: `export GEMINI_API_KEY=your_key`
    - Windows: `set GEMINI_API_KEY=your_key`
-3. Run `streamlit run app.py`. The sidebar says "Gemini enabled" and notes say "Generated by: AI (Gemini)".
+3. Run `streamlit run app.py`. The sidebar says "Gemini enabled" and the note card shows "Generated by: AI (Gemini)".
 
-**Alternative:** create a file `.streamlit/secrets.toml` containing `GEMINI_API_KEY = "your_key"`. This file is in `.gitignore`, so it never goes to GitHub. When you deploy on Streamlit Community Cloud, paste the same line into the app's **Secrets** settings instead.
+**Alternative:** create a file `.streamlit/secrets.toml` containing `GEMINI_API_KEY = "your_key"`. This file is in `.gitignore`, so it never goes to GitHub. (The other file in that folder, `config.toml`, is just the theme and *is* committed.) When you deploy on Streamlit Community Cloud, paste the same line into the app's **Secrets** settings.
 
 **Never** paste the key into a `.py` file or commit it. If one leaks, delete it in AI Studio and make a new one.
 
-If the note says "Generated by: Template" even though your key is set, Google's free model was probably busy. It retries automatically. Wait a minute and refresh.
+If the card says "Generated by: Template" even though your key is set, Google's free model was probably busy. It already retried. Change the estimate dropdown or refresh to try again.
 
 To try a different model, set `GEMINI_MODEL` (for example `gemini-3.5-flash-lite`).
 
 ## Try these edits yourself
-1. **Make it stricter.** In `checker.py`, change `REF_PCT_THRESHOLD = 0.25` to `0.15`. Run `python checker.py` again — more items get flagged. Talk about this trade-off in interviews (catching more vs. false alarms).
-2. **Add an item to the price book.** In `generate_sample_data.py`, add a line to `REFERENCE`, e.g. `("Gutter replace", "Exteriors", "LF", 9.00),`, then run `python generate_sample_data.py` and refresh the app.
-3. **Change the app title.** In `app.py`, edit the `st.title(...)` text (for example add your name), save, and the browser updates.
+1. **Make it stricter.** In `checker.py`, change `REF_PCT_THRESHOLD = 0.25` to `0.15`. Run `python checker.py` again: more items get flagged. Be ready to talk about this trade-off in interviews (catching more vs. false alarms).
+2. **Add an item to the price book.** In `generate_sample_data.py`, add a line to `REFERENCE`, e.g. `("Gutter replace", "Exteriors", "LF", 9.00),`, then run `python generate_sample_data.py` and `python make_sample_pdf.py`, and refresh the app. (The random prices will shift a little, so the exact flag counts may change.)
+3. **Change the accent color.** In `ui.py` change `ACCENT = "#F5A524"` (amber) to e.g. `"#22D3EE"` (cyan), and in `.streamlit/config.toml` change `primaryColor` to match. Refresh the browser.
+4. **Add a follow-up recommendation.** In `reviewer.py`, find `"- Verify quantities against field measurements and the scope of work before approval."` and add a line below it, e.g. `lines.append("- Compare against the original scope of loss.")`. You'll see it in template notes (run the app without a key).
 
-4. **Add a follow-up recommendation.** In `reviewer.py`, find `"Verify quantities against field measurements before approval."` and add another line below it, e.g. `lines.append("- Compare against the original scope of loss.")`.
-
-After each edit, commit it: `git add . && git commit -m "Describe your change"`.
+After each edit, run the tests, then commit: `git add . && git commit -m "Describe your change"`.

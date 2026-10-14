@@ -1,12 +1,11 @@
-pandas
-numpy
-scikit-learn
-streamlit
-plotly
-pdfplumber
-reportlab
-# AI reviewer: Gemini (primary, free tier) and OpenAI (optional secondary)
-google-genai
-openai
-# optional: only needed to regenerate screenshots
-playwright
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.4
+streamlit>=1.50
+plotly>=5.20
+pdfplumber>=0.11
+reportlab>=4.0
+# AI reviewer: Gemini (primary, free tier) and OpenAI (optional secondary).
+# Both are optional at runtime; without a key the app uses the template.
+google-genai>=1.0
+openai>=1.40

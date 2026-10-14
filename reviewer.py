@@ -11,6 +11,7 @@ or the Streamlit Cloud "Secrets" box). Never put a key in this file.
 import os
 import time
 import pandas as pd
+from checker import MIN_PEERS
 
 
 def _get(name, default=None):
@@ -32,53 +33,106 @@ OPENAI_DEFAULT_MODEL = "gpt-4o-mini"
 def _facts(df: pd.DataFrame, estimate_id: str) -> dict:
     e = df[df.estimate_id == estimate_id]
     f = e[e.flagged].copy()
-    f["abs_var"] = f["potential_variance_$"].abs()
+    f["abs_var"] = f["potential_variance_$"].abs().fillna(0)
     f = f.sort_values("abs_var", ascending=False)
-    total = float(e.line_total.sum())
-    high = float(f.loc[f.direction == "HIGH", "potential_variance_$"].sum())
-    low = float(f.loc[f.direction == "LOW", "potential_variance_$"].sum())
-    return {"estimate_id": estimate_id, "lines": len(e), "flagged": len(f), "total": total,
-            "high_var": high, "low_var": low, "top": f.head(3)}
+    var = f["potential_variance_$"].fillna(0)
+    n_est = int(df.estimate_id.nunique())
+    return {"estimate_id": estimate_id, "lines": len(e), "flagged": len(f),
+            "total": float(e.line_total.sum()),
+            "high_var": float(var[var > 0].sum()),          # overpricing ($, positive)
+            "low_var": float(var[var < 0].sum()),           # underpricing ($, negative)
+            "high_sev": int((f.severity == "High").sum()),
+            "unchecked": int((e.baseline_source == "None").sum()),
+            "n_estimates": n_est, "peers": n_est > MIN_PEERS, "top": f.head(3)}
+
+
+def _assessment(x) -> str:
+    """Proportionate wording: strong language only when the evidence supports it."""
+    if x["flagged"] == 0:
+        return "No pricing exceptions found"
+    share = (x["high_var"] - x["low_var"]) / x["total"] if x["total"] else 0
+    if x["high_sev"] >= 2 or (x["high_sev"] >= 1 and share >= 0.10):
+        return "Significant pricing concerns"
+    if x["high_sev"] >= 1:
+        return "Pricing exception(s) needing follow-up"
+    return "Minor pricing exceptions"
+
+
+def _caveat(x) -> str:
+    if x["peers"]:
+        return ""
+    return (f"Peer comparison was not available (only {_plural(x['n_estimates'], 'estimate')} loaded; "
+            f"more than {MIN_PEERS} are needed), so flags are based on the reference price table only.")
+
+
+def _money(v):
+    return f"{'+' if v >= 0 else '-'}${abs(v):,.0f}"
+
+
+def _plural(n, word):
+    return f"{n} {word}{'' if n == 1 else 's'}"
 
 
 def template_summary(df: pd.DataFrame, estimate_id: str) -> str:
     x = _facts(df, estimate_id)
-    if x["flagged"] == 0:
-        return (f"**Estimate {estimate_id} — Reviewer note**\n\n"
-                f"**Overall assessment:** All {x['lines']} line items (total ${x['total']:,.0f}) are within "
-                "expected ranges versus reference pricing and peer estimates. No pricing exceptions noted.\n\n"
-                "**Recommended follow-ups:** Confirm quantities against the scope of work and site photos.")
-    share = abs(x["high_var"]) / x["total"] if x["total"] else 0
-    level = ("Significant pricing concerns" if share > 0.05 or x["flagged"] >= 3
-             else "Minor pricing exceptions")
-    lines = [f"**Estimate {estimate_id} — Reviewer note**", "",
-             f"**Overall assessment:** {level}. {x['flagged']} of {x['lines']} line items {'was' if x['flagged'] == 1 else 'were'} flagged "
-             f"on an estimate total of ${x['total']:,.0f}.", "", "**Top issues:**"]
-    for _, r in x["top"].iterrows():
-        lines.append(f"- {r['item']} ({r['direction']}): ${r.unit_cost:,.2f}/{r.unit} vs reference "
-                     f"${r.reference_unit_cost:,.2f} ({r.pct_vs_reference:+.0%}), "
-                     f"impact ${r['potential_variance_$']:+,.0f}.")
-    lines += ["", f"**Dollar impact:** Potential overpricing ${x['high_var']:,.0f}; "
-              f"underpricing ${abs(x['low_var']):,.0f} (may indicate missing scope).", "",
-              "**Recommended follow-ups:**"]
+    lines = [f"**Overall assessment:** {_assessment(x)}. "
+             + (f"{x['flagged']} of {_plural(x['lines'], 'line item')} "
+                f"{'was' if x['flagged'] == 1 else 'were'} flagged" if x["flagged"]
+                else f"All {_plural(x['lines'], 'line item')} are within expected ranges")
+             + f" on an estimate total of ${x['total']:,.0f}."]
+    if _caveat(x):
+        lines.append(f"_{_caveat(x)}_")
+    if x["unchecked"]:
+        lines.append(f"_{_plural(x['unchecked'], 'line item')} could not be checked "
+                     "(not in the reference table and no peers)._")
+    if x["flagged"]:
+        lines.append("**Top issues:**")
+        for _, r in x["top"].iterrows():
+            base = (f"reference ${r.reference_unit_cost:,.2f}" if pd.notna(r.reference_unit_cost)
+                    else f"peer median ${r.peer_median:,.2f}")
+            lines.append(f"- **{r['item']}** ({r.severity} severity, {r.direction}): "
+                         f"${r.unit_cost:,.2f}/{r.unit or 'unit'} vs {base} ({r.pct_vs_baseline:+.0%}), "
+                         f"impact {_money(r['potential_variance_$'])}.")
+        dollar = []
+        if x["high_var"] > 0:
+            dollar.append(f"potential overpricing ${x['high_var']:,.0f}")
+        if x["low_var"] < 0:
+            dollar.append(f"potential underpricing ${abs(x['low_var']):,.0f} (may indicate missing scope)")
+        lines.append("**Dollar impact:** " + "; ".join(dollar)[0].upper() + "; ".join(dollar)[1:] + ".")
+    lines.append("**Recommended follow-ups:**")
     if x["high_var"] > 0:
         lines.append("- Request supporting invoices or vendor quotes for high-priced items.")
     if x["low_var"] < 0:
         lines.append("- Confirm low-priced items include full scope (materials, labor, disposal).")
-    lines.append("- Verify quantities against field measurements before approval.")
-    return "\n".join(lines)
+    lines.append("- Verify quantities against field measurements and the scope of work before approval.")
+    return _join(lines)
+
+
+def _join(lines):
+    out = []
+    for l in lines:
+        out.append(l if l.startswith("- ") else "\n" + l)
+    return "\n".join(out).strip()
 
 
 def _prompt(df, estimate_id) -> str:
     x = _facts(df, estimate_id)
-    issues = x["top"][["item", "unit", "unit_cost", "reference_unit_cost", "pct_vs_reference",
-                       "potential_variance_$", "direction", "reason"]].to_dict("records")
-    return ("You are a construction cost reviewer. Write a concise reviewer note in Markdown with sections "
-            "'Overall assessment', 'Top issues', 'Dollar impact', 'Recommended follow-ups'. Use only these "
-            f"facts; do not invent numbers.\nEstimate: {estimate_id}\nLine items: {x['lines']}\n"
-            f"Flagged: {x['flagged']}\nEstimate total: ${x['total']:,.2f}\n"
-            f"Overpricing variance: ${x['high_var']:,.2f}\nUnderpricing variance: ${x['low_var']:,.2f}\n"
-            f"Top flagged items: {issues}")
+    issues = x["top"][["item", "unit", "unit_cost", "baseline_unit_cost", "baseline_source", "pct_vs_baseline",
+                       "potential_variance_$", "severity", "direction", "reason"]].to_dict("records")
+    return ("You are a construction cost reviewer. Write a concise reviewer note in Markdown with bold "
+            "labels (not headings) 'Overall assessment', 'Top issues', 'Dollar impact', 'Recommended "
+            "follow-ups'. Under 180 words. Use ONLY these facts; do not invent numbers, items, or causes. "
+            "Keep the tone proportionate to the evidence: use the suggested assessment wording, and if peer "
+            "comparison was not available, say so.\n"
+            f"Estimate: {estimate_id}\nLine items: {x['lines']}\nFlagged: {x['flagged']} "
+            f"(high severity: {x['high_sev']})\nEstimate total: ${x['total']:,.2f}\n"
+            f"Overpricing: ${x['high_var']:,.2f}\nUnderpricing: ${abs(x['low_var']):,.2f}\n"
+            f"Suggested assessment: {_assessment(x)}\n"
+            + (f"Peer comparison: AVAILABLE ({x['n_estimates']} estimates loaded). Do not say it was unavailable.\n"
+               if x["peers"] else f"Peer comparison: NOT available. Mention this caveat: {_caveat(x)}\n")
+            + (f"Lines that could not be checked: {x['unchecked']} (mention this)\n" if x["unchecked"]
+               else "All lines could be checked (do not mention unchecked lines).\n")
+            + f"Top flagged items: {issues}")
 
 
 def gemini_summary(prompt: str) -> str | None:
