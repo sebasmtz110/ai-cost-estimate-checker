@@ -21,7 +21,15 @@ PDF estimates are read with `pdfplumber`: the tool finds the line-item table and
 An item is flagged if it misses the reference threshold, or if at least two checks agree. Each flag gets a reason (e.g. *"Unit cost $786.25/SQ is 85% above the reference $425.00; outlier vs 7 peer estimates… Verify scope/quantity or request backup pricing."*) and a dollar variance (`(unit cost − reference) × qty`).
 
 ### AI reviewer summary
-For each estimate the app writes a reviewer-style note: overall assessment, top issues, dollar impact, and recommended follow-ups. If an `OPENAI_API_KEY` environment variable is set, an LLM writes the note using only the checker's computed facts; with no key (or if the call fails) a deterministic template writes it, so the app always works. Keys are read from the environment only and are never stored in the code.
+For each estimate the app writes a reviewer-style note: overall assessment, top issues, dollar impact, and recommended follow-ups. An LLM writes the note using only the checker's computed facts, with this fallback order:
+
+1. **Google Gemini** (primary, free tier): `GEMINI_API_KEY` or `GOOGLE_API_KEY`, model via `GEMINI_MODEL` (default `gemini-3.8-flash`)
+2. **OpenAI** (optional): `OPENAI_API_KEY`, model via `OPENAI_MODEL`
+3. **Deterministic template**: no key needed, so the app always works
+
+If the free-tier Gemini model is busy (HTTP 503), the tool retries and then tries `gemini-3.5-flash-lite` before falling back. Notes are cached per estimate so the app doesn't call the API again on every rerun.
+
+Keys are read from environment variables or Streamlit secrets (`.streamlit/secrets.toml`, git-ignored, or the Secrets box on Streamlit Community Cloud). They are never stored in the code.
 
 ## Screenshots
 *(All data shown is synthetic.)*
@@ -53,8 +61,10 @@ python checker.py                # command-line report -> flagged_report.csv
 streamlit run app.py             # web app at http://localhost:8501
 python tests_smoke.py            # smoke tests: sample, CSV and PDF paths
 
-# optional: AI-written reviewer notes
-export OPENAI_API_KEY=your_key_here   # Windows: set OPENAI_API_KEY=...
+python tests_llm_fallback.py     # reviewer falls back to template with no/invalid key
+
+# optional: AI-written reviewer notes (free key: https://aistudio.google.com/app/apikey)
+export GEMINI_API_KEY=your_key_here   # Windows: set GEMINI_API_KEY=...
 ```
 In the app you can use the sample data or upload a PDF estimate or your own CSV with columns `item, category, unit, qty, unit_cost` (optional `estimate_id`). Item names must match `data/reference_unit_costs.csv` for the reference check.
 
@@ -62,10 +72,11 @@ In the app you can use the sample data or upload a PDF estimate or your own CSV 
 ```
 app.py                     Streamlit web app (upload, metrics, flagged table, chart)
 checker.py                 Analysis logic (reference, peer, and ML checks)
-reviewer.py                AI reviewer note (LLM if key set, template otherwise)
+reviewer.py                AI reviewer note (Gemini → OpenAI → template)
 pdf_parser.py              Reads line-item tables from PDF estimates
 make_sample_pdf.py         Builds the synthetic sample PDF estimate
 tests_smoke.py             Smoke tests for sample / CSV / PDF paths
+tests_llm_fallback.py      Tests the no-key / invalid-key fallback
 capture_screenshots.py     Regenerates the README screenshots
 generate_sample_data.py    Builds the synthetic dataset
 data/                      Synthetic sample estimates (CSV + PDF) + reference unit costs
@@ -74,7 +85,7 @@ WALKTHROUGH.md             Plain-English tour of the code
 ```
 
 ## Tech
-Python · pandas · NumPy · scikit-learn · Streamlit · Plotly · pdfplumber · OpenAI API (optional)
+Python · pandas · NumPy · scikit-learn · Streamlit · Plotly · pdfplumber · Google Gemini API · OpenAI API (optional)
 
 ## Next steps
 - Support regional cost adjustments

@@ -5,7 +5,8 @@ streamlit
 plotly
 pdfplumber
 reportlab
-# optional: enables LLM reviewer notes when OPENAI_API_KEY is set
+# AI reviewer: Gemini (primary, free tier) and OpenAI (optional secondary)
+google-genai
 openai
 # optional: only needed to regenerate screenshots
 playwright
