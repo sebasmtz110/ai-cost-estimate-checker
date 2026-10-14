@@ -1,0 +1,23 @@
+item,category,unit,reference_unit_cost
+Remove & replace drywall 1/2in,Drywall,SF,3.5
+"Tape, mud & texture drywall",Drywall,SF,1.75
+Interior paint - 2 coats,Painting,SF,1.4
+Exterior paint - 2 coats,Painting,SF,2.1
+Laminate flooring install,Flooring,SF,4.25
+Carpet & pad install,Flooring,SF,3.6
+Ceramic tile flooring,Flooring,SF,9.5
+Baseboard trim replace,Finish Carpentry,LF,3.2
+Interior door - prehung,Finish Carpentry,EA,285.0
+Asphalt shingle roofing,Roofing,SQ,425.0
+Roof felt underlayment,Roofing,SQ,38.0
+Drip edge,Roofing,LF,2.8
+Batt insulation R-13,Insulation,SF,1.3
+Base cabinets,Cabinets,LF,210.0
+Laminate countertop,Cabinets,LF,48.0
+Water heater 40 gal,Plumbing,EA,1350.0
+Toilet - remove & reset,Plumbing,EA,260.0
+Electrical outlet replace,Electrical,EA,95.0
+Light fixture replace,Electrical,EA,165.0
+Debris haul-off,General Conditions,LD,375.0
+Water extraction & drying,Mitigation,SF,2.4
+Vinyl window replace,Windows & Doors,EA,620.0

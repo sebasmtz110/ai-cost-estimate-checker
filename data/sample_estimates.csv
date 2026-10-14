@@ -1,0 +1,150 @@
+estimate_id,item,category,unit,qty,unit_cost,line_total
+EST-1001,Base cabinets,Cabinets,LF,96,196.33,18847.68
+EST-1001,Laminate countertop,Cabinets,LF,78,52.34,4082.52
+EST-1001,Remove & replace drywall 1/2in,Drywall,SF,1074,3.71,3984.54
+EST-1001,"Tape, mud & texture drywall",Drywall,SF,747,1.48,1105.56
+EST-1001,Electrical outlet replace,Electrical,EA,3,99.13,297.39
+EST-1001,Light fixture replace,Electrical,EA,5,166.54,832.7
+EST-1001,Baseboard trim replace,Finish Carpentry,LF,196,3.42,670.32
+EST-1001,Interior door - prehung,Finish Carpentry,EA,1,280.79,280.79
+EST-1001,Carpet & pad install,Flooring,SF,1267,3.92,4966.64
+EST-1001,Ceramic tile flooring,Flooring,SF,1058,8.85,9363.3
+EST-1001,Laminate flooring install,Flooring,SF,1236,4.55,5623.8
+EST-1001,Debris haul-off,General Conditions,LD,4,401.14,1604.56
+EST-1001,Batt insulation R-13,Insulation,SF,146,1.52,221.92
+EST-1001,Interior paint - 2 coats,Painting,SF,1198,1.36,1629.28
+EST-1001,Toilet - remove & reset,Plumbing,EA,4,273.53,1094.12
+EST-1001,Asphalt shingle roofing,Roofing,SQ,11,419.75,4617.25
+EST-1001,Drip edge,Roofing,LF,114,2.89,329.46
+EST-1001,Roof felt underlayment,Roofing,SQ,34,36.93,1255.62
+EST-1001,Vinyl window replace,Windows & Doors,EA,9,634.34,5709.06
+EST-1002,Base cabinets,Cabinets,LF,77,203.9,15700.3
+EST-1002,Remove & replace drywall 1/2in,Drywall,SF,91,3.09,281.19
+EST-1002,"Tape, mud & texture drywall",Drywall,SF,924,1.66,1533.84
+EST-1002,Electrical outlet replace,Electrical,EA,6,100.06,600.36
+EST-1002,Light fixture replace,Electrical,EA,3,163.95,491.85
+EST-1002,Baseboard trim replace,Finish Carpentry,LF,136,3.08,418.88
+EST-1002,Interior door - prehung,Finish Carpentry,EA,1,280.64,280.64
+EST-1002,Carpet & pad install,Flooring,SF,200,3.65,730.0
+EST-1002,Ceramic tile flooring,Flooring,SF,1242,10.04,12469.68
+EST-1002,Laminate flooring install,Flooring,SF,777,4.58,3558.66
+EST-1002,Debris haul-off,General Conditions,LD,2,331.59,663.18
+EST-1002,Batt insulation R-13,Insulation,SF,926,1.27,1176.02
+EST-1002,Toilet - remove & reset,Plumbing,EA,10,270.0,2700.0
+EST-1002,Water heater 40 gal,Plumbing,EA,2,1402.59,2805.18
+EST-1002,Asphalt shingle roofing,Roofing,SQ,10,786.25,7862.5
+EST-1002,Drip edge,Roofing,LF,36,2.84,102.24
+EST-1002,Roof felt underlayment,Roofing,SQ,15,38.43,576.45
+EST-1002,Vinyl window replace,Windows & Doors,EA,5,575.09,2875.45
+EST-1003,Base cabinets,Cabinets,LF,217,186.87,40550.79
+EST-1003,Laminate countertop,Cabinets,LF,132,47.15,6223.8
+EST-1003,Remove & replace drywall 1/2in,Drywall,SF,1461,3.86,5639.46
+EST-1003,"Tape, mud & texture drywall",Drywall,SF,476,1.62,771.12
+EST-1003,Electrical outlet replace,Electrical,EA,6,117.15,702.9
+EST-1003,Light fixture replace,Electrical,EA,2,136.86,273.72
+EST-1003,Baseboard trim replace,Finish Carpentry,LF,39,3.14,122.46
+EST-1003,Carpet & pad install,Flooring,SF,784,3.62,2838.08
+EST-1003,Ceramic tile flooring,Flooring,SF,1382,9.68,13377.76
+EST-1003,Laminate flooring install,Flooring,SF,772,4.33,3342.76
+EST-1003,Debris haul-off,General Conditions,LD,3,350.61,1051.83
+EST-1003,Batt insulation R-13,Insulation,SF,581,1.23,714.63
+EST-1003,Water extraction & drying,Mitigation,SF,1371,2.37,3249.27
+EST-1003,Exterior paint - 2 coats,Painting,SF,273,1.81,494.13
+EST-1003,Interior paint - 2 coats,Painting,SF,1169,0.56,654.64
+EST-1003,Water heater 40 gal,Plumbing,EA,5,1383.86,6919.3
+EST-1003,Asphalt shingle roofing,Roofing,SQ,24,432.48,10379.52
+EST-1003,Roof felt underlayment,Roofing,SQ,14,39.08,547.12
+EST-1003,Vinyl window replace,Windows & Doors,EA,5,627.79,3138.95
+EST-1004,Base cabinets,Cabinets,LF,197,231.94,45692.18
+EST-1004,Laminate countertop,Cabinets,LF,80,52.25,4180.0
+EST-1004,"Tape, mud & texture drywall",Drywall,SF,559,1.68,939.12
+EST-1004,Electrical outlet replace,Electrical,EA,11,107.55,1183.05
+EST-1004,Light fixture replace,Electrical,EA,3,162.63,487.89
+EST-1004,Baseboard trim replace,Finish Carpentry,LF,87,2.97,258.39
+EST-1004,Interior door - prehung,Finish Carpentry,EA,7,281.43,1970.01
+EST-1004,Ceramic tile flooring,Flooring,SF,911,8.88,8089.68
+EST-1004,Laminate flooring install,Flooring,SF,1248,3.85,4804.8
+EST-1004,Debris haul-off,General Conditions,LD,2,341.79,683.58
+EST-1004,Batt insulation R-13,Insulation,SF,1365,1.29,1760.85
+EST-1004,Water extraction & drying,Mitigation,SF,991,2.52,2497.32
+EST-1004,Exterior paint - 2 coats,Painting,SF,1506,2.27,3418.62
+EST-1004,Interior paint - 2 coats,Painting,SF,245,1.43,350.35
+EST-1004,Toilet - remove & reset,Plumbing,EA,8,263.81,2110.48
+EST-1004,Asphalt shingle roofing,Roofing,SQ,17,402.74,6846.58
+EST-1004,Drip edge,Roofing,LF,19,2.84,53.96
+EST-1004,Roof felt underlayment,Roofing,SQ,23,34.27,788.21
+EST-1004,Vinyl window replace,Windows & Doors,EA,6,611.89,3671.34
+EST-1005,Laminate countertop,Cabinets,LF,11,55.21,607.31
+EST-1005,"Tape, mud & texture drywall",Drywall,SF,841,1.76,1480.16
+EST-1005,Light fixture replace,Electrical,EA,9,156.37,1407.33
+EST-1005,Baseboard trim replace,Finish Carpentry,LF,26,3.12,81.12
+EST-1005,Interior door - prehung,Finish Carpentry,EA,5,297.27,1486.35
+EST-1005,Carpet & pad install,Flooring,SF,1302,3.61,4700.22
+EST-1005,Laminate flooring install,Flooring,SF,1393,4.56,6352.08
+EST-1005,Debris haul-off,General Conditions,LD,2,343.13,686.26
+EST-1005,Water extraction & drying,Mitigation,SF,886,2.82,2498.52
+EST-1005,Exterior paint - 2 coats,Painting,SF,265,1.9,503.5
+EST-1005,Interior paint - 2 coats,Painting,SF,1553,1.39,2158.67
+EST-1005,Toilet - remove & reset,Plumbing,EA,7,266.56,1865.92
+EST-1005,Water heater 40 gal,Plumbing,EA,11,2835.0,31185.0
+EST-1005,Asphalt shingle roofing,Roofing,SQ,23,401.34,9230.82
+EST-1005,Drip edge,Roofing,LF,70,2.84,198.8
+EST-1005,Vinyl window replace,Windows & Doors,EA,2,675.74,1351.48
+EST-1006,Base cabinets,Cabinets,LF,216,210.0,45360.0
+EST-1006,Laminate countertop,Cabinets,LF,115,49.22,5660.3
+EST-1006,Remove & replace drywall 1/2in,Drywall,SF,648,3.01,1950.48
+EST-1006,"Tape, mud & texture drywall",Drywall,SF,887,1.57,1392.59
+EST-1006,Light fixture replace,Electrical,EA,11,150.32,1653.52
+EST-1006,Baseboard trim replace,Finish Carpentry,LF,135,3.1,418.5
+EST-1006,Interior door - prehung,Finish Carpentry,EA,2,253.65,507.3
+EST-1006,Carpet & pad install,Flooring,SF,623,4.1,2554.3
+EST-1006,Ceramic tile flooring,Flooring,SF,302,9.31,2811.62
+EST-1006,Laminate flooring install,Flooring,SF,10,6.8,68.0
+EST-1006,Debris haul-off,General Conditions,LD,3,382.88,1148.64
+EST-1006,Batt insulation R-13,Insulation,SF,161,1.32,212.52
+EST-1006,Water extraction & drying,Mitigation,SF,1127,2.58,2907.66
+EST-1006,Interior paint - 2 coats,Painting,SF,456,1.61,734.16
+EST-1006,Toilet - remove & reset,Plumbing,EA,3,268.03,804.09
+EST-1006,Water heater 40 gal,Plumbing,EA,10,1576.06,15760.6
+EST-1006,Drip edge,Roofing,LF,184,2.91,535.44
+EST-1006,Vinyl window replace,Windows & Doors,EA,2,564.92,1129.84
+EST-1007,Base cabinets,Cabinets,LF,142,190.2,27008.4
+EST-1007,Laminate countertop,Cabinets,LF,115,48.27,5551.05
+EST-1007,Remove & replace drywall 1/2in,Drywall,SF,960,3.51,3369.6
+EST-1007,"Tape, mud & texture drywall",Drywall,SF,1264,1.74,2199.36
+EST-1007,Light fixture replace,Electrical,EA,1,158.16,158.16
+EST-1007,Baseboard trim replace,Finish Carpentry,LF,87,3.18,276.66
+EST-1007,Interior door - prehung,Finish Carpentry,EA,3,314.64,943.92
+EST-1007,Carpet & pad install,Flooring,SF,485,3.69,1789.65
+EST-1007,Ceramic tile flooring,Flooring,SF,594,10.16,6035.04
+EST-1007,Laminate flooring install,Flooring,SF,459,4.12,1891.08
+EST-1007,Debris haul-off,General Conditions,LD,2,131.25,262.5
+EST-1007,Batt insulation R-13,Insulation,SF,1244,1.23,1530.12
+EST-1007,Water extraction & drying,Mitigation,SF,1269,2.41,3058.29
+EST-1007,Exterior paint - 2 coats,Painting,SF,861,2.06,1773.66
+EST-1007,Interior paint - 2 coats,Painting,SF,571,1.56,890.76
+EST-1007,Toilet - remove & reset,Plumbing,EA,7,227.3,1591.1
+EST-1007,Water heater 40 gal,Plumbing,EA,10,1431.09,14310.9
+EST-1007,Asphalt shingle roofing,Roofing,SQ,17,483.9,8226.3
+EST-1007,Drip edge,Roofing,LF,122,2.99,364.78
+EST-1007,Roof felt underlayment,Roofing,SQ,21,43.3,909.3
+EST-1007,Vinyl window replace,Windows & Doors,EA,1,635.48,635.48
+EST-1008,Base cabinets,Cabinets,LF,85,357.0,30345.0
+EST-1008,Laminate countertop,Cabinets,LF,173,53.1,9186.3
+EST-1008,Remove & replace drywall 1/2in,Drywall,SF,224,3.67,822.08
+EST-1008,"Tape, mud & texture drywall",Drywall,SF,1112,1.76,1957.12
+EST-1008,Light fixture replace,Electrical,EA,1,166.42,166.42
+EST-1008,Baseboard trim replace,Finish Carpentry,LF,53,3.47,183.91
+EST-1008,Interior door - prehung,Finish Carpentry,EA,8,290.34,2322.72
+EST-1008,Ceramic tile flooring,Flooring,SF,1495,10.14,15159.3
+EST-1008,Debris haul-off,General Conditions,LD,3,326.93,980.79
+EST-1008,Batt insulation R-13,Insulation,SF,745,1.22,908.9
+EST-1008,Water extraction & drying,Mitigation,SF,1551,2.25,3489.75
+EST-1008,Exterior paint - 2 coats,Painting,SF,291,2.2,640.2
+EST-1008,Interior paint - 2 coats,Painting,SF,874,1.58,1380.92
+EST-1008,Toilet - remove & reset,Plumbing,EA,11,255.73,2813.03
+EST-1008,Water heater 40 gal,Plumbing,EA,10,1409.84,14098.4
+EST-1008,Asphalt shingle roofing,Roofing,SQ,29,419.98,12179.42
+EST-1008,Drip edge,Roofing,LF,126,2.77,349.02
+EST-1008,Roof felt underlayment,Roofing,SQ,19,39.17,744.23
+EST-1008,Vinyl window replace,Windows & Doors,EA,6,646.0,3876.0
