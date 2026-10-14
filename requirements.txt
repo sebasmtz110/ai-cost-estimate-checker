@@ -3,3 +3,9 @@ numpy
 scikit-learn
 streamlit
 plotly
+pdfplumber
+reportlab
+# optional: enables LLM reviewer notes when OPENAI_API_KEY is set
+openai
+# optional: only needed to regenerate screenshots
+playwright
