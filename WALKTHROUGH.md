@@ -24,19 +24,20 @@ The settings at the top (`REF_PCT_THRESHOLD`, `Z_THRESHOLD`, etc.) control how s
 
 **`make_sample_pdf.py`**: makes `data/sample_estimate.pdf`, a fake estimate PDF (stamped as synthetic) for testing the upload.
 
-**`app.py`**: the website. Streamlit turns Python into a web page. It has a hero banner at the top, 5 summary "KPI cards", and 4 tabs:
-- **AI reviewer**: pick an estimate and read its memo
-- **Flagged items**: table with colored severity badges, filterable by severity
-- **Analytics**: scatter chart of price vs. expected price (dots outside the dotted ±25% band are suspicious) plus a bar chart of dollar impact by trade
-- **Data**: every line, any skipped rows, and a download button
+**`app.py`**: the website. Streamlit turns Python into a web page. It's laid out as 3 steps:
+1. **Choose your estimate**: sample data or upload a CSV/PDF.
+2. **Explore the results**: 5 clickable **counters**. Each is a real button: tap one and the table shows exactly the rows it counts, and the button turns orange so you know which is active. "Show all" resets it. Trade and Estimate filters narrow everything. Tap a row (or a chart point) to open a **detail card** that shows the four checks with 🚩 or ✅.
+3. **Get the AI reviewer note** for the estimate you pick.
 
-**`ui.py`**: the look of the app: colors (dark navy with a construction-amber accent), the CSS styling, the KPI cards, badges and the flagged table.
+The buttons use Streamlit's `on_click` callbacks: a small function runs *before* the page redraws and records which counter you picked in `st.session_state` (the app's memory between clicks).
 
-**`.streamlit/config.toml`**: Streamlit's theme settings (background color, accent color, font).
+**`ui.py`**: a few lines of CSS that make the counter buttons big, plus helpers that format money and percentages. The CSS deliberately has no overlays or floating layers, so nothing can block clicks on a phone.
+
+**`.streamlit/config.toml`**: Streamlit's theme settings: a light background and one orange accent color.
 
 **`tests_smoke.py`, `tests_edge_cases.py`, `tests_llm_fallback.py`**: automatic checks. Run each with `python <file>`. Each should end with `... PASSED`. The edge-case tests throw bad data at the checker (missing columns, letters in number columns, zero prices, unknown items, a broken PDF) and make sure it handles them politely.
 
-**`capture_screenshots.py`**: opens the app in an invisible browser, clicks through every tab, tries good and bad uploads, and saves the README pictures to `docs/screenshots/`.
+**`capture_screenshots.py`**: opens the app in an invisible browser, once as a desktop and once as a phone, and clicks every counter, filter, row, dropdown, download and upload (including a bad file). It also saves the README pictures. Point it at the live site with `APP_URL=... python capture_screenshots.py --no-shots`.
 
 **`requirements.txt` / `requirements-dev.txt`**: the Python libraries to install. The dev file adds the screenshot tool.
 
@@ -58,7 +59,7 @@ To try a different model, set `GEMINI_MODEL` (for example `gemini-3.5-flash-lite
 ## Try these edits yourself
 1. **Make it stricter.** In `checker.py`, change `REF_PCT_THRESHOLD = 0.25` to `0.15`. Run `python checker.py` again: more items get flagged. Be ready to talk about this trade-off in interviews (catching more vs. false alarms).
 2. **Add an item to the price book.** In `generate_sample_data.py`, add a line to `REFERENCE`, e.g. `("Gutter replace", "Exteriors", "LF", 9.00),`, then run `python generate_sample_data.py` and `python make_sample_pdf.py`, and refresh the app. (The random prices will shift a little, so the exact flag counts may change.)
-3. **Change the accent color.** In `ui.py` change `ACCENT = "#F5A524"` (amber) to e.g. `"#22D3EE"` (cyan), and in `.streamlit/config.toml` change `primaryColor` to match. Refresh the browser.
+3. **Change the accent color.** In `.streamlit/config.toml` change `primaryColor = "#EA580C"` (orange) to e.g. `"#2563EB"` (blue), and change `ACCENT` in `ui.py` to match. Restart the app.
 4. **Add a follow-up recommendation.** In `reviewer.py`, find `"- Verify quantities against field measurements and the scope of work before approval."` and add a line below it, e.g. `lines.append("- Compare against the original scope of loss.")`. You'll see it in template notes (run the app without a key).
 
 After each edit, run the tests, then commit: `git add . && git commit -m "Describe your change"`.

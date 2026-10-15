@@ -1,9 +1,9 @@
 [theme]
-base = "dark"
-primaryColor = "#F5A524"            # construction amber accent
-backgroundColor = "#0B1220"         # deep navy
-secondaryBackgroundColor = "#131C2E" # slate panels
-textColor = "#E2E8F0"
+base = "light"
+primaryColor = "#EA580C"             # single accent: construction orange
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F5F7"
+textColor = "#0F172A"
 font = "sans serif"
 
 [server]
