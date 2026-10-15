@@ -1,10 +1,10 @@
 [theme]
-base = "light"
-primaryColor = "#EA580C"             # single accent: construction orange
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F4F5F7"
-textColor = "#0F172A"
-font = "sans serif"
+base = "dark"
+primaryColor = "#FF9F1C"              # amber/orange terminal accent
+backgroundColor = "#07090C"           # near-black
+secondaryBackgroundColor = "#11161D"  # panel
+textColor = "#E6E6E6"
+font = "monospace"
 
 [server]
 headless = true

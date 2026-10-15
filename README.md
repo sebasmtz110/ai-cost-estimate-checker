@@ -15,6 +15,8 @@ A Python tool for **project controls and construction cost review**. It reads re
 
 Every number has a tooltip explaining what it means, and a 60-second "How it works" panel is built in.
 
+**Look:** a dark, Bloomberg-terminal-style dashboard with a near-black background, monospace tabular numbers, an amber accent, ▲ red = over reference and ▼ green = under, thin-bordered panels, and a scrolling ticker strip of key stats. The ticker is decorative (`pointer-events: none`) and the counters are real buttons, so everything is clickable on desktop and phones.
+
 ## The problem
 In disaster-recovery and insurance repair work, reviewers compare contractor estimates line by line against expected pricing. Doing this by hand across many estimates is slow, and overpriced items (or underpriced items that hint at missing scope) are easy to miss. This tool automates the first pass so a reviewer can focus on the lines that need attention.
 
@@ -82,7 +84,7 @@ Upload a PDF estimate or a CSV with columns `item, qty, unit_cost` (optional `es
 ## Project structure
 ```
 app.py                     Streamlit web app (3-step flow, clickable counters, filters, detail card)
-ui.py                      Minimal CSS + formatting helpers
+ui.py                      Terminal-style CSS, ticker strip, formatting helpers
 checker.py                 Analysis logic (reference, peer and ML checks, severity, data cleaning)
 reviewer.py                AI reviewer note (Gemini → OpenAI → template)
 pdf_parser.py              Reads line-item tables from PDF estimates
@@ -90,7 +92,7 @@ generate_sample_data.py    Builds the synthetic CSV dataset
 make_sample_pdf.py         Builds the synthetic sample PDF estimate
 tests_*.py                 Smoke, edge-case and AI-fallback tests
 capture_screenshots.py     Desktop + mobile click-tests and README screenshots (Playwright)
-.streamlit/config.toml     Light theme with one orange accent
+.streamlit/config.toml     Dark terminal theme (near-black, monospace, amber accent)
 data/                      Synthetic sample estimates (CSV + PDF) + reference unit costs
 docs/screenshots/          App screenshots
 WALKTHROUGH.md             Plain-English tour of the code

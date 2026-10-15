@@ -69,7 +69,8 @@ def line_detail(r):
     with st.container(border=True, key="line_detail"):
         st.markdown(f"#### {r['item']}")
         st.caption(f"{r.estimate_id} · {r.category or 'No trade'} · {r.qty:,.0f} {r.unit}"
-                   + (f" · {ui.SEVERITY_ICON[r.severity]} severity" if r.severity else " · not flagged"))
+                   + (f" · {ui.SEVERITY_ICON[r.severity]} severity · {ui.SIGNAL[r.direction]}" if r.severity
+                      else " · not flagged"))
         c = st.columns(4)
         c[0].metric("Unit cost", ui.money(r.unit_cost), help="Price per unit on this estimate")
         c[1].metric("Reference", ui.money(r.baseline_unit_cost),
@@ -94,9 +95,10 @@ provider = ("Gemini" if (_get("GEMINI_API_KEY") or _get("GOOGLE_API_KEY"))
             else "OpenAI" if _get("OPENAI_API_KEY") else None)
 
 # ---------------- Header ----------------
-st.title("🏗️ Cost Estimate Checker")
-st.markdown("Find over- and under-priced line items in construction repair estimates, "
-            "then get an AI reviewer note with dollar impact and next steps.")
+st.title("▌Cost Estimate Checker")
+ticker_slot = st.empty()  # filled with live stats once data is loaded
+st.caption("Flags over- and under-priced line items in construction repair estimates and drafts an AI reviewer "
+           "note with dollar impact and next steps.")
 with st.expander("ℹ️ How it works (60-second version)"):
     st.markdown(
         "1. **Load** an estimate (CSV or PDF), or use the synthetic sample of 8 fictional repair estimates.\n"
@@ -111,7 +113,7 @@ with st.expander("ℹ️ How it works (60-second version)"):
         "pdfplumber.*")
 
 # ---------------- Step 1: data ----------------
-st.markdown(ui.step(1, "Choose your estimate"), unsafe_allow_html=True)
+st.markdown(ui.step(1, "Data source · choose your estimate"), unsafe_allow_html=True)
 mode = st.segmented_control("Data source", ["Use sample data", "Upload my file"], default="Use sample data",
                             key="mode", label_visibility="collapsed") or "Use sample data"
 up = None
@@ -155,7 +157,16 @@ if st.session_state.get("data_sig") != sig:
     st.session_state.pop("picked", None)
 
 # ---------------- Step 2: results ----------------
-st.markdown(ui.step(2, "Explore the results"), unsafe_allow_html=True)
+ticker_slot.markdown(ui.ticker([
+    ("EST", f"{df.estimate_id.nunique()}", ""), ("LINES", f"{len(df):,}", ""),
+    ("TOTAL", f"${df.line_total.sum():,.0f}", ""), ("FLAGGED", f"{int(df.flagged.sum())}", "acc"),
+    ("OVER", ui.money(df.loc[df.flagged & (df["potential_variance_$"] > 0), "potential_variance_$"].sum(), True), "up"),
+    ("UNDER", ui.money(df.loc[df.flagged & (df["potential_variance_$"] < 0), "potential_variance_$"].sum(), True), "dn"),
+    ("HIGH SEV", f"{int((df.severity == 'High').sum())}", "up"),
+    *[(r.estimate_id, ui.money(r["potential_variance_$"], True), "up" if r["potential_variance_$"] > 0 else "dn")
+      for _, r in df[df.flagged].groupby("estimate_id", as_index=False)["potential_variance_$"].sum().iterrows()],
+]), unsafe_allow_html=True)
+st.markdown(ui.step(2, "Results · explore & drill down"), unsafe_allow_html=True)
 s = summary(df)
 for msg in ([f"Peer comparison needs more than {MIN_PEERS} estimates; this file has {s['estimates']}, so flags "
              "use the reference price table only."] if not s["peer_check_available"] else []) + \
@@ -199,13 +210,23 @@ h1.markdown(esc(f"**{len(rows):,} {label.lower()}** · net $ impact **{ui.money(
 if view != "all" or trades or ests:
     h2.button("↺ Show all", key="show_all", width="stretch", on_click=show_all)
 
-table = rows.assign(sev=rows.severity.map(ui.SEVERITY_ICON).fillna("—"), pct_vs_baseline=rows.pct_vs_baseline * 100)[
-    ["sev", "estimate_id", "item", "category", "qty", "unit", "unit_cost", "baseline_unit_cost", "pct_vs_baseline",
+table = rows.assign(sev=rows.severity.map(ui.SEVERITY_ICON).fillna("—"), pct_vs_baseline=rows.pct_vs_baseline * 100,
+                    sig=rows.direction.map(ui.SIGNAL).where(rows.flagged, "—"))[
+    ["sev", "sig", "estimate_id", "item", "category", "qty", "unit", "unit_cost", "baseline_unit_cost", "pct_vs_baseline",
      "potential_variance_$", "reason"]]
+def _color(col):
+    return [f"color: {ui.OVER}" if str(v).startswith("▲") or (isinstance(v, (int, float)) and v > 0)
+            else f"color: {ui.UNDER}" if str(v).startswith("▼") or (isinstance(v, (int, float)) and v < 0)
+            else "" for v in col]
+
+
+styled = table.style.apply(_color, subset=["sig", "potential_variance_$"]).apply(
+    lambda c: [f"color: {ui.ACCENT}" if "HIGH" in str(v) else "" for v in c], subset=["sev"])
 event = st.dataframe(
-    table, width="stretch", hide_index=True, height=min(400, 38 + 35 * max(len(table), 1)),
+    styled, width="stretch", hide_index=True, height=min(400, 38 + 35 * max(len(table), 1)),
     key="drill_table", on_select="rerun", selection_mode="single-row", column_config={
         "sev": st.column_config.TextColumn("Severity", width="small"),
+        "sig": st.column_config.TextColumn("Signal", width="small", help="▲ over reference (red) · ▼ under (green)"),
         "estimate_id": st.column_config.TextColumn("Estimate", width="small"),
         "item": st.column_config.TextColumn("Line item", width="medium"),
         "category": st.column_config.TextColumn("Trade", width="small"),
@@ -228,21 +249,26 @@ with st.expander("📈 Chart: unit cost vs reference · tap a point for details"
     if plot.empty:
         st.info("No line items have a reference to chart.")
     else:
-        plot["status"] = plot.severity.replace("", "OK")
+        plot["status"] = (plot.direction.map({"HIGH": "Over (flagged)", "LOW": "Under (flagged)"})
+                          .where(plot.flagged, "OK").fillna("OK"))
         plot["rid"] = plot.index
         fig = px.scatter(plot, x="baseline_unit_cost", y="unit_cost", color="status", log_x=True, log_y=True,
-                         color_discrete_map={"OK": "#CBD5E1", "High": "#DC2626", "Medium": ui.ACCENT, "Low": "#2563EB"},
-                         category_orders={"status": ["High", "Medium", "Low", "OK"]},
+                         color_discrete_map={"OK": "#3A4350", "Over (flagged)": ui.OVER, "Under (flagged)": ui.UNDER},
+                         category_orders={"status": ["Over (flagged)", "Under (flagged)", "OK"]},
                          custom_data=["rid", "estimate_id", "item", "pct_vs_baseline"])
         fig.update_traces(marker=dict(size=10, line=dict(width=0)),
                           hovertemplate="<b>%{customdata[2]}</b> · %{customdata[1]}<br>$%{y:,.2f} vs $%{x:,.2f}"
                                         " (%{customdata[3]:+.0%})<extra></extra>")
         lo, hi = plot.baseline_unit_cost.min() * 0.7, plot.baseline_unit_cost.max() * 1.4
         fig.add_trace(go.Scatter(x=[lo, hi], y=[lo, hi], mode="lines", name="= reference",
-                                 line=dict(color="#94A3B8", dash="dash", width=1), hoverinfo="skip"))
-        fig.update_layout(template="plotly_white", height=400, margin=dict(l=0, r=0, t=10, b=0),
+                                 line=dict(color=ui.ACCENT, dash="dot", width=1), hoverinfo="skip"))
+        fig.update_layout(template="plotly_dark", paper_bgcolor="#07090C", plot_bgcolor="#0B0E13",
+                          font=dict(family="ui-monospace, SFMono-Regular, Menlo, monospace", size=11, color="#C9D1D9"),
+                          height=400, margin=dict(l=0, r=0, t=10, b=0),
                           legend=dict(orientation="h", y=1.1, title_text=""), clickmode="event+select",
                           xaxis_title="Reference unit cost ($)", yaxis_title="Estimate unit cost ($)")
+        fig.update_xaxes(gridcolor=ui.GRID, zeroline=False, linecolor=ui.GRID)
+        fig.update_yaxes(gridcolor=ui.GRID, zeroline=False, linecolor=ui.GRID)
         ch = st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="chart",
                              on_select="rerun", selection_mode="points")
         pts = [p for p in (ch.selection.points if ch else []) if p.get("customdata")]
@@ -255,7 +281,7 @@ if picked is not None and picked in df.index:
     st.button("✕ Close details", key="close_detail", on_click=close_detail)
 
 # ---------------- Step 3: AI review ----------------
-st.markdown(ui.step(3, "Get the AI reviewer note"), unsafe_allow_html=True)
+st.markdown(ui.step(3, "AI reviewer · get the note"), unsafe_allow_html=True)
 ids = sorted(df.estimate_id.unique())
 fl = df[df.flagged]
 imp = fl.assign(a=fl["potential_variance_$"].abs()).groupby("estimate_id").a.sum()
