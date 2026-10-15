@@ -16,9 +16,13 @@ EXPECT = {"Line items": 149, "Flagged": 9, "Over-priced": 6, "Under-priced": 3, 
 
 def root(p):
     """Streamlit Cloud serves the app inside an iframe; locally it's the page itself."""
-    for f in p.frames:
-        if "/~/+/" in f.url:
-            return f
+    if "streamlit.app" in URL:
+        for _ in range(120):
+            for f in p.frames:
+                if "/~/+/" in f.url:
+                    return f
+            p.wait_for_timeout(1000)
+        raise RuntimeError("app iframe not found")
     return p.main_frame
 
 
