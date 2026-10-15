@@ -9,7 +9,7 @@ from checker import analyze, summary, REQUIRED, OPTIONAL, MIN_PEERS, REF_PCT_THR
 from pdf_parser import parse_pdf
 from reviewer import reviewer_summary, _get
 
-st.set_page_config(page_title="AI Construction Cost Estimate Checker", page_icon="🏗️", layout="centered")
+st.set_page_config(page_title="AI Construction Cost Estimate Checker", page_icon="🔷", layout="centered")
 st.markdown(ui.CSS, unsafe_allow_html=True)
 
 
@@ -86,7 +86,7 @@ def line_detail(r):
                   ("Peer z-score", r.flag_zscore, f"{int(r.peer_count)} other estimates, {z}"),
                   ("Peer IQR fence", r.flag_iqr, "outside the typical range of other estimates"),
                   ("Anomaly model", r.flag_ml, f"IsolationForest score {r.anomaly_score:.2f}")]
-        st.markdown("  \n".join(f"{'🚩' if hit else '✅'} **{n}**: {'flagged' if hit else 'ok'} ({d})"
+        st.markdown("  \n".join(f"{'◆' if hit else '◇'} **{n}**: {'flagged' if hit else 'ok'} ({d})"
                                 for n, hit, d in checks))
         if r.reason:
             st.info(esc(r.reason))
@@ -101,7 +101,7 @@ provider = ("Gemini" if (_get("GEMINI_API_KEY") or _get("GOOGLE_API_KEY"))
 # ---------------- Header ----------------
 header_slot = st.empty()  # navy header bar; filled once we know the data source
 header_slot.markdown(ui.header("Loading…"), unsafe_allow_html=True)
-with st.expander("💡 How it works (60-second version)"):
+with st.expander("How it works (60-second version)"):
     st.markdown(
         "1. **Load** an estimate (CSV or PDF), or use the synthetic sample of 8 fictional repair estimates.\n"
         "2. **Check** every line three ways: against a **reference price table** (same item & unit), against the "
@@ -130,14 +130,14 @@ if mode == "Upload my file":
         c2.download_button("⬇ Sample PDF", fh, "sample_estimate.pdf", width="stretch", key="dl_pdf")
     if up is None:
         header_slot.markdown(ui.header("Waiting for your file"), unsafe_allow_html=True)
-        st.info("👆 Upload a file to analyze it, or switch back to **Use sample data**.")
+        st.info("Upload a file to analyze it, or switch back to **Use sample data**.")
         st.stop()
 
 if up is not None:
     try:
         df = analyze(read_upload(up), ref)
     except ValueError as e:
-        st.error(f"Could not analyze **{up.name}**: {e}")
+        st.info(f"Could not analyze **{up.name}**: {e}")
         st.stop()
     st.success(f"Using uploaded file: {up.name}")
     header_slot.markdown(ui.header(f"Reviewing your file: {up.name}"), unsafe_allow_html=True)
@@ -148,7 +148,7 @@ else:
 
 issues = pd.DataFrame(df.attrs.get("data_issues", []))
 if df.empty:
-    st.error("No valid line items to analyze. Every row was missing an item, or had a missing, "
+    st.info("No valid line items to analyze. Every row was missing an item, or had a missing, "
              "non-numeric, zero or negative quantity / unit cost.")
     if len(issues):
         st.dataframe(issues, width="stretch", hide_index=True)
@@ -170,12 +170,12 @@ for msg in ([f"Peer comparison needs more than {MIN_PEERS} estimates; this file 
             if s["unmatched_items"] else []) + \
            ([f"{s['data_issues']} row(s) were skipped because of missing or invalid values (see Details)."]
             if s["data_issues"] else []):
-    st.warning(msg)
+    st.info(msg)
 
 with st.container(key="searchbar"):
     f1, f2 = st.columns(2)
-    trades = f1.multiselect("🔍 Filter by trade", sorted(df.category.unique()), placeholder="All trades", key="f_trade")
-    ests = f2.multiselect("🔍 Filter by estimate", sorted(df.estimate_id.unique()), placeholder="All estimates",
+    trades = f1.multiselect("Filter by trade", sorted(df.category.unique()), placeholder="All trades", key="f_trade")
+    ests = f2.multiselect("Filter by estimate", sorted(df.estimate_id.unique()), placeholder="All estimates",
                           key="f_est")
 scope = df[(df.category.isin(trades) if trades else pd.Series(True, index=df.index))
           & (df.estimate_id.isin(ests) if ests else pd.Series(True, index=df.index))]
@@ -190,7 +190,7 @@ VIEWS = {  # key: (label, row mask, tooltip)
     "severe": ("High severity", scope.flagged & (scope.severity == "High"),
                "Flagged lines ≥50% off reference or with ≥$5,000 impact."),
 }
-st.caption("👇 Tap a tile to see exactly the items it counts. Tap **See details** on any item for the full breakdown.")
+st.caption("Tap a tile to see exactly the items it counts. Tap **See details** on any item for the full breakdown.")
 cols = st.columns(len(VIEWS))
 for col, (k, (label, mask, hlp)) in zip(cols, VIEWS.items()):
     with col.container(key=f"kpi_{k}"):
@@ -236,7 +236,7 @@ event = table_box.dataframe(
     key="drill_table", on_select="rerun", selection_mode="single-row", column_config={
         "sev": st.column_config.TextColumn("Severity", width="small"),
         "sig": st.column_config.TextColumn("Price vs reference", width="small",
-                                           help="▲ Over reference (red) · ▼ Under (green)"),
+                                           help="▲ Over reference (purple) · ▼ Under (teal)"),
         "estimate_id": st.column_config.TextColumn("Estimate", width="small"),
         "item": st.column_config.TextColumn("Line item", width="medium"),
         "category": st.column_config.TextColumn("Trade", width="small"),
@@ -252,7 +252,7 @@ event = table_box.dataframe(
 if event.selection.rows:
     st.session_state.picked = int(rows.index[event.selection.rows[0]])
 if rows.empty:
-    st.success(f"Good news: no {label.lower()} items match this filter. 🎉 Try another tile, or tap **Show all**.")
+    st.success(f"Good news: no {label.lower()} items match this filter. Try another tile, or tap **Show all**.")
 
 with st.expander("📈 Chart: unit cost vs reference · tap a point for details", expanded=False):
     plot = scope.dropna(subset=["baseline_unit_cost"]).copy()
@@ -263,7 +263,7 @@ with st.expander("📈 Chart: unit cost vs reference · tap a point for details"
                           .where(plot.flagged, "OK").fillna("OK"))
         plot["rid"] = plot.index
         fig = px.scatter(plot, x="baseline_unit_cost", y="unit_cost", color="status", log_x=True, log_y=True,
-                         color_discrete_map={"OK": "#C7CCCC", "Over (flagged)": ui.OVER, "Under (flagged)": ui.UNDER},
+                         color_discrete_map={"OK": "#CBD5E1", "Over (flagged)": ui.OVER, "Under (flagged)": ui.UNDER},
                          category_orders={"status": ["Over (flagged)", "Under (flagged)", "OK"]},
                          custom_data=["rid", "estimate_id", "item", "pct_vs_baseline"])
         fig.update_traces(marker=dict(size=10, line=dict(width=0)),
@@ -271,7 +271,7 @@ with st.expander("📈 Chart: unit cost vs reference · tap a point for details"
                                         " (%{customdata[3]:+.0%})<extra></extra>")
         lo, hi = plot.baseline_unit_cost.min() * 0.7, plot.baseline_unit_cost.max() * 1.4
         fig.add_trace(go.Scatter(x=[lo, hi], y=[lo, hi], mode="lines", name="= reference",
-                                 line=dict(color=ui.ORANGE, dash="dot", width=1.5), hoverinfo="skip"))
+                                 line=dict(color=ui.ACCENT, dash="dot", width=1.5), hoverinfo="skip"))
         fig.update_layout(template="plotly_white", paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
                           font=dict(family="Inter, -apple-system, Segoe UI, Roboto, Arial, sans-serif", size=12,
                                     color="#0F1111"),

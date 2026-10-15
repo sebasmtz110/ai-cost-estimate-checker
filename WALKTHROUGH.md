@@ -26,14 +26,14 @@ The settings at the top (`REF_PCT_THRESHOLD`, `Z_THRESHOLD`, etc.) control how s
 
 **`app.py`**: the website. Streamlit turns Python into a web page. It's laid out as 3 steps:
 1. **Choose your estimate**: sample data or upload a CSV/PDF.
-2. **Explore the results**: 5 clickable **counters**. Each is a real button: tap one and the table shows exactly the rows it counts, and the tile gets an orange outline so you know which is active. "Show all" resets it. Trade and Estimate filters narrow everything. Each flagged item appears as a **product card**. Tap **See details** (or a table row / chart point) to open a **detail card** that shows the four checks with 🚩 or ✅.
+2. **Explore the results**: 5 clickable **counters**. Each is a real button: tap one and the table shows exactly the rows it counts, and the tile turns solid indigo so you know which is active. "Show all" resets it. Trade and Estimate filters narrow everything. Each flagged item appears as a **card**. Tap **See details** (or a table row / chart point) to open a **detail card** that shows the four checks with 🚩 or ✅.
 3. **Get the AI reviewer note** for the estimate you pick.
 
 The buttons use Streamlit's `on_click` callbacks: a small function runs *before* the page redraws and records which counter you picked in `st.session_state` (the app's memory between clicks).
 
-**`ui.py`**: the look: a navy header bar, white rounded cards with soft shadows, orange/yellow pill buttons, and the **product cards** for flagged items (price, crossed-out reference price, a red/green "deal tag", ★ severity stars). The header and card text are display-only. They have `pointer-events: none`, which means taps pass straight through, so they can never block a button on a phone.
+**`ui.py`**: the look. It has the colors (one indigo accent; purple = over-priced, teal = under-priced), the CSS for white cards and tiles, the flagged-item cards (price, `Reference $X`, signal pill, severity pill) and the severity pill shades (High = solid indigo, Medium = light indigo, Low = outline). The header and card text are display-only. They have `pointer-events: none`, so taps pass straight through and can never block a button on a phone.
 
-**`.streamlit/config.toml`**: Streamlit's theme settings: light gray background, white cards, orange accent.
+**`.streamlit/config.toml`**: Streamlit's theme settings: off-white background, white cards, indigo accent.
 
 **`tests_smoke.py`, `tests_edge_cases.py`, `tests_llm_fallback.py`**: automatic checks. Run each with `python <file>`. Each should end with `... PASSED`. The edge-case tests throw bad data at the checker (missing columns, letters in number columns, zero prices, unknown items, a broken PDF) and make sure it handles them politely.
 
@@ -59,7 +59,7 @@ To try a different model, set `GEMINI_MODEL` (for example `gemini-3.5-flash-lite
 ## Try these edits yourself
 1. **Make it stricter.** In `checker.py`, change `REF_PCT_THRESHOLD = 0.25` to `0.15`. Run `python checker.py` again: more items get flagged. Be ready to talk about this trade-off in interviews (catching more vs. false alarms).
 2. **Add an item to the price book.** In `generate_sample_data.py`, add a line to `REFERENCE`, e.g. `("Gutter replace", "Exteriors", "LF", 9.00),`, then run `python generate_sample_data.py` and `python make_sample_pdf.py`, and refresh the app. (The random prices will shift a little, so the exact flag counts may change.)
-3. **Change the accent color.** In `.streamlit/config.toml` change `primaryColor = "#FF9900"` (orange) to e.g. `"#007185"` (teal), and change `ORANGE` in `ui.py` to match. Restart the app.
+3. **Change the accent color.** In `.streamlit/config.toml` change `primaryColor = "#4F46E5"` (indigo) to e.g. `"#2563EB"` (blue), and change `ACCENT` in `ui.py` to match. Restart the app.
 4. **Add a follow-up recommendation.** In `reviewer.py`, find `"- Verify quantities against field measurements and the scope of work before approval."` and add a line below it, e.g. `lines.append("- Compare against the original scope of loss.")`. You'll see it in template notes (run the app without a key).
 
 After each edit, run the tests, then commit: `git add . && git commit -m "Describe your change"`.

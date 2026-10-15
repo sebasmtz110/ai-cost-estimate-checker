@@ -15,7 +15,7 @@ A Python tool for **project controls and construction cost review**. It reads re
 
 Every number has a tooltip explaining what it means, and a 60-second "How it works" panel is built in.
 
-**Look:** a friendly storefront-style UI with a dark navy header bar, a light gray page with white rounded cards, orange/yellow pill buttons, and plain-English labels. Each flagged line is shown as a product-style card with its price vs reference, a red ▲ over / green ▼ under tag, ★ severity stars and a **See details** button. The header and card text are display-only (`pointer-events: none`) and every control is a real Streamlit widget, so everything is tappable on desktop and phones.
+**Look:** a calm, neutral UI: a soft off-white background, white cards with subtle borders and gentle shadows, one indigo accent (`#4F46E5`) for primary actions and the active tile, and rounded corners with an Inter/system font. Over-priced items are **deep purple ▲** and under-priced are **teal ▼**. Severity is shown as pills in shades of the accent (High = solid, Medium = lighter, Low = outline). Each flagged line is a card showing price, `Reference $X`, the signal and severity pills, $ impact and a **See details** button. Display-only HTML has `pointer-events: none` and every control is a real Streamlit widget, so everything is tappable on desktop and phones.
 
 ## The problem
 In disaster-recovery and insurance repair work, reviewers compare contractor estimates line by line against expected pricing. Doing this by hand across many estimates is slow, and overpriced items (or underpriced items that hint at missing scope) are easy to miss. This tool automates the first pass so a reviewer can focus on the lines that need attention.
@@ -84,7 +84,7 @@ Upload a PDF estimate or a CSV with columns `item, qty, unit_cost` (optional `es
 ## Project structure
 ```
 app.py                     Streamlit web app (3-step flow, clickable counters, filters, detail card)
-ui.py                      Storefront-style CSS, header bar, product cards, formatting helpers
+ui.py                      CSS, header, flagged-item cards, severity pills, formatting helpers
 checker.py                 Analysis logic (reference, peer and ML checks, severity, data cleaning)
 reviewer.py                AI reviewer note (Gemini → OpenAI → template)
 pdf_parser.py              Reads line-item tables from PDF estimates
@@ -92,7 +92,7 @@ generate_sample_data.py    Builds the synthetic CSV dataset
 make_sample_pdf.py         Builds the synthetic sample PDF estimate
 tests_*.py                 Smoke, edge-case and AI-fallback tests
 capture_screenshots.py     Desktop + mobile click-tests and README screenshots (Playwright)
-.streamlit/config.toml     Light theme: gray page, white cards, orange accent
+.streamlit/config.toml     Light theme: off-white page, white cards, indigo accent
 data/                      Synthetic sample estimates (CSV + PDF) + reference unit costs
 docs/screenshots/          App screenshots
 WALKTHROUGH.md             Plain-English tour of the code
