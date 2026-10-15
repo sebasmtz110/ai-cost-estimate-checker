@@ -10,12 +10,12 @@ A Python tool for **project controls and construction cost review**. It reads re
 
 ### Using the app (3 steps)
 1. **Choose your estimate**: use the synthetic sample, or upload a CSV/PDF (sample files are downloadable in the app).
-2. **Explore the results**: tap a **counter** (Line items · Flagged · Over-priced · Under-priced · High severity) to show exactly the rows it counts; the active counter is highlighted and **↺ Show all** resets it. Filter by **trade** and **estimate**. Tap a **row** (or a point on the chart) to open a detail card: unit cost vs reference, % off, $ impact, and which of the 4 checks fired.
+2. **Explore the results**: tap a **counter** (Line items · Flagged · Over-priced · Under-priced · High severity) to show exactly the rows it counts; the active counter is highlighted and **↺ Show all** resets it. Filter by **trade** and **estimate**. Tap **See details** on a card (or a table row / chart point) to open a detail card: unit cost vs reference, % off, $ impact, and which of the 4 checks fired.
 3. **Get the AI reviewer note** for any estimate.
 
 Every number has a tooltip explaining what it means, and a 60-second "How it works" panel is built in.
 
-**Look:** a dark, Bloomberg-terminal-style dashboard with a near-black background, monospace tabular numbers, an amber accent, ▲ red = over reference and ▼ green = under, thin-bordered panels, and a scrolling ticker strip of key stats. The ticker is decorative (`pointer-events: none`) and the counters are real buttons, so everything is clickable on desktop and phones.
+**Look:** a friendly storefront-style UI with a dark navy header bar, a light gray page with white rounded cards, orange/yellow pill buttons, and plain-English labels. Each flagged line is shown as a product-style card with its price vs reference, a red ▲ over / green ▼ under tag, ★ severity stars and a **See details** button. The header and card text are display-only (`pointer-events: none`) and every control is a real Streamlit widget, so everything is tappable on desktop and phones.
 
 ## The problem
 In disaster-recovery and insurance repair work, reviewers compare contractor estimates line by line against expected pricing. Doing this by hand across many estimates is slow, and overpriced items (or underpriced items that hint at missing scope) are easy to miss. This tool automates the first pass so a reviewer can focus on the lines that need attention.
@@ -84,7 +84,7 @@ Upload a PDF estimate or a CSV with columns `item, qty, unit_cost` (optional `es
 ## Project structure
 ```
 app.py                     Streamlit web app (3-step flow, clickable counters, filters, detail card)
-ui.py                      Terminal-style CSS, ticker strip, formatting helpers
+ui.py                      Storefront-style CSS, header bar, product cards, formatting helpers
 checker.py                 Analysis logic (reference, peer and ML checks, severity, data cleaning)
 reviewer.py                AI reviewer note (Gemini → OpenAI → template)
 pdf_parser.py              Reads line-item tables from PDF estimates
@@ -92,7 +92,7 @@ generate_sample_data.py    Builds the synthetic CSV dataset
 make_sample_pdf.py         Builds the synthetic sample PDF estimate
 tests_*.py                 Smoke, edge-case and AI-fallback tests
 capture_screenshots.py     Desktop + mobile click-tests and README screenshots (Playwright)
-.streamlit/config.toml     Dark terminal theme (near-black, monospace, amber accent)
+.streamlit/config.toml     Light theme: gray page, white cards, orange accent
 data/                      Synthetic sample estimates (CSV + PDF) + reference unit costs
 docs/screenshots/          App screenshots
 WALKTHROUGH.md             Plain-English tour of the code

@@ -1,10 +1,10 @@
 [theme]
-base = "dark"
-primaryColor = "#FF9F1C"              # amber/orange terminal accent
-backgroundColor = "#07090C"           # near-black
-secondaryBackgroundColor = "#11161D"  # panel
-textColor = "#E6E6E6"
-font = "monospace"
+base = "light"
+primaryColor = "#FF9900"              # Amazon-style orange
+backgroundColor = "#EAEDED"           # light gray page
+secondaryBackgroundColor = "#FFFFFF"  # white cards / inputs
+textColor = "#0F1111"
+font = "sans serif"
 
 [server]
 headless = true

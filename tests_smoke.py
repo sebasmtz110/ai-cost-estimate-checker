@@ -34,6 +34,15 @@ for k, n in expect(df).items():
     assert all(at.button(key=f"btn_{o}").proto.type == "secondary" for o in others)
     print(f"counter {k}: {shown} rows, highlighted")
 
+# "See details" on a product card opens the line detail
+at.button(key="btn_over").click().run(); ok(at)
+see = [b for b in at.button if (b.key or "").startswith("see_")]
+assert len(see) == expect(df)["over"], len(see)
+see[0].click().run(); ok(at)
+assert at.session_state.picked is not None and any("Unit cost" in m.label for m in at.metric)
+print(f"cards: {len(see)} over-priced cards; See details opens line detail")
+at.button(key="close_detail").click().run(); ok(at)
+
 # Filters narrow the counters and the table
 at.multiselect(key="f_trade").set_value(["Plumbing"]).run(); ok(at)
 sub = df[df.category == "Plumbing"]
