@@ -26,7 +26,7 @@ The settings at the top (`REF_PCT_THRESHOLD`, `Z_THRESHOLD`, etc.) control how s
 
 **`app.py`**: the website. Streamlit turns Python into a web page. It's laid out as 3 steps:
 1. **Choose your estimate**: sample data or upload a CSV/PDF.
-2. **Explore the results**: 5 clickable **counters**. Each is a real button: tap one and the table shows exactly the rows it counts, and the tile turns solid indigo so you know which is active. "Show all" resets it. Trade and Estimate filters narrow everything. Each flagged item appears as a **card**. Tap **See details** (or a table row / chart point) to open a **detail card** that shows the four checks with 🚩 or ✅.
+2. **Explore the results**: 5 clickable **counters**. Each is a real button: tap one and the table shows exactly the rows it counts, and the tile turns solid indigo so you know which is active. "Show all" resets it. Trade and Estimate filters narrow everything. Each flagged item appears as a **card**. Tap **See details** (or a table row / chart point) to open a **detail card** that shows the four checks with ◆ (flagged) or ◇ (ok).
 3. **Get the AI reviewer note** for the estimate you pick.
 
 The buttons use Streamlit's `on_click` callbacks: a small function runs *before* the page redraws and records which counter you picked in `st.session_state` (the app's memory between clicks).
