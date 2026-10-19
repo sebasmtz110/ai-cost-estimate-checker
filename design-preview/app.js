@@ -7,14 +7,12 @@
     screens.forEach((s) => s.classList.toggle("is-active", s.dataset.screen === name));
     tabs.forEach((t) => t.classList.toggle("is-on", t.dataset.go === name));
     if (name !== "library") closeDetail();
-    window.scrollTo(0, 0);
   }
 
   goButtons.forEach((btn) => {
     btn.addEventListener("click", () => showScreen(btn.dataset.go));
   });
 
-  // Set logging + rest timer
   const restBar = document.getElementById("rest-bar");
   const restClock = document.getElementById("rest-clock");
   let restLeft = 0;
@@ -29,7 +27,7 @@
   function stopRest() {
     if (restTimer) clearInterval(restTimer);
     restTimer = null;
-    restBar.classList.remove("is-on");
+    restBar?.classList.remove("is-on");
   }
 
   function startRest(seconds = 90) {
@@ -47,7 +45,7 @@
     }, 1000);
   }
 
-  document.querySelectorAll(".set-check").forEach((btn) => {
+  document.querySelectorAll(".set-done").forEach((btn) => {
     btn.addEventListener("click", () => {
       const row = btn.closest("tr");
       const done = btn.classList.toggle("is-done");
@@ -64,7 +62,6 @@
     if (restLeft === 0) stopRest();
   });
 
-  // Workout elapsed (cosmetic demo clock from a fixed offset)
   const elapsedEl = document.getElementById("workout-elapsed");
   let elapsed = 12 * 60 + 38;
   setInterval(() => {
@@ -76,14 +73,13 @@
     elapsedEl.textContent = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }, 1000);
 
-  // Library filter + search + detail
   const search = document.getElementById("exercise-search");
-  const chips = [...document.querySelectorAll("#muscle-chips .chip")];
-  const rows = [...document.querySelectorAll("#exercise-list .exercise-row")];
+  const chips = [...document.querySelectorAll("#muscle-chips .filter")];
+  const rows = [...document.querySelectorAll("#exercise-list .ex-row")];
   let muscleFilter = "all";
 
   function applyLibraryFilter() {
-    const q = (search.value || "").trim().toLowerCase();
+    const q = (search?.value || "").trim().toLowerCase();
     rows.forEach((row) => {
       const muscleOk = muscleFilter === "all" || row.dataset.muscle === muscleFilter;
       const text = `${row.dataset.name} ${row.dataset.equip} ${row.dataset.muscle}`.toLowerCase();
@@ -107,7 +103,7 @@
   const detailTitle = document.getElementById("detail-title");
   const detailMuscle = document.getElementById("detail-muscle");
   const detailEquip = document.getElementById("detail-equip");
-  const detailArt = document.getElementById("detail-art");
+  const detailImg = document.getElementById("detail-img");
 
   function closeDetail() {
     detail?.classList.remove("is-open");
@@ -118,14 +114,11 @@
     detailTitle.textContent = row.dataset.name;
     detailMuscle.textContent = row.dataset.muscle.replace(/^./, (c) => c.toUpperCase());
     detailEquip.textContent = row.dataset.equip;
-    detailArt.innerHTML = row.querySelector(".thumb")?.innerHTML || "";
+    if (detailImg) detailImg.src = row.dataset.img || "";
     detail.classList.add("is-open");
     detail.setAttribute("aria-hidden", "false");
   }
 
-  rows.forEach((row) => {
-    row.addEventListener("click", () => openDetail(row));
-  });
-
+  rows.forEach((row) => row.addEventListener("click", () => openDetail(row)));
   document.getElementById("detail-close")?.addEventListener("click", closeDetail);
 })();

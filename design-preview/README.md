@@ -1,44 +1,29 @@
-# Setline — Design Preview (Prototype Only)
+# Setline — Design Preview (Draft 2)
 
-Isolated high-fidelity UI prototype for a **proposed** premium fitness redesign.  
-**This folder does not modify the production application.**
+Isolated high-fidelity UI prototype. **Does not modify the production application.**
 
-> **Repo note:** The existing project in this repository is the *AI Construction Cost Estimate Checker* (Streamlit). There is no gym app to redesign in production files. This prototype explores the fitness product UI described in the brief so it can be evaluated before any integration decision.
+## Phone preview
 
-## How to preview
+If a tunnel is running in the agent environment, use the HTTPS link shared in chat.
 
-From the repository root:
+Locally:
 
 ```bash
 cd design-preview
 python3 -m http.server 8765
 ```
 
-Open: [http://localhost:8765](http://localhost:8765)
+Open `http://localhost:8765` (full-bleed on phone browsers; desktop shows a device frame).
 
-Or open `design-preview/index.html` directly in a browser.
+## Draft 2 changes
 
-Use the phone frame on desktop, or resize the window. Bottom tabs switch screens. On **Home**, tap **Start session**. On **Workout**, tap set checkmarks to log sets and trigger the rest timer. On **Library**, search/filter and open an exercise. On **Progress**, review sample history/charts.
+- Stronger identity: cool light canvas, black primary actions, volt signal accent, Oswald + IBM Plex Sans
+- Home rebuilt as full-bleed next-session stage + rhythm track + editorial last session (not KPI card stacks)
+- Exercise media: photographic temps with **Temp media** badges (not stick figures)
+- Workout: sticky session header, larger inputs, volt complete states, rest dock
+- Progress: compact charts, sample labels, tighter hierarchy
+- Mobile: removed fake 9:41 bar; safe-area padding; tab bar clearance
 
-## What’s included
+## Restrictions
 
-| Screen | Purpose |
-|--------|---------|
-| Home | Next session CTA, consistency strip, recent sessions, volume snapshot |
-| Workout | Active set logging, rest timer, exercise progression |
-| Library | Search, muscle/equipment filters, exercise detail |
-| Progress | History list, volume trend, strength sparkline (sample data) |
-
-## Placeholders
-
-- Exercise figures are **simple SVG silhouettes** (consistent style demo), not a finished animation library.
-- All training numbers are **synthetic sample data** for layout only.
-- Brand name **Setline** is a prototype label only.
-
-## Design tokens
-
-See `styles.css` (`:root` variables) and `DESIGN.md`.
-
-## Do not integrate
-
-Do not copy these files into the Streamlit app unless explicitly approved after review.
+Prototype-only under `design-preview/`. Wait for explicit approval before any production integration.

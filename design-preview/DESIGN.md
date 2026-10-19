@@ -1,29 +1,29 @@
-# Setline — Design Direction
+# Setline v2 — Design Direction
 
-## Research synthesis (not a copy)
+## Draft 1 weaknesses (addressed)
 
-| Source | Takeaways used |
-|--------|----------------|
-| **Strava** | One accent color; data-first hierarchy; tabular stats; hairline structure over card stacks |
-| **Nike Training Club** | Bold condensed display type; imagery as storytelling; light chrome so content leads |
-| **Nike Run Club** | Glanceable metrics; calm progress surfaces; motivational but restrained |
-| **Strong / Hevy** | Set table as the product; one-tap complete; rest timer after log; large touch targets |
+1. **Generic AI dashboard composition** — hero card → three meta stats → identical history rows → KPI strip. No editorial hierarchy.
+2. **Thin brand identity** — white canvas + red CTA + stick-figure SVGs read as template, not product.
+3. **Fake device chrome** — simulated 9:41 bar and phone bezel fought the real iPhone browser (safe areas, tab overlap).
 
-## Visual identity
+## Research → principles
 
-- **Canvas:** white / warm light gray (`#FFFFFF` / `#F6F5F2`) — light mode only
-- **Ink:** near-black (`#121212`) for primary type
-- **Accent:** athletic ember `#E23A1B` (not purple, not Strava orange, not Volt)
-- **Success:** `#1F8A5B` for completed sets
-- **Structure:** hairline dividers (`#E6E4DF`), section rhythm via spacing — not identical card tiles
-- **Type:** *Archivo* (UI) + *Archivo Narrow* (display metrics)
-- **Radius:** modest (`8–12px`); primary CTA slightly stronger; no pill soup
-- **Motion:** screen fade, set-complete flash, rest-timer pulse (3 purposeful motions)
+| Reference | Principle carried forward |
+|-----------|---------------------------|
+| Nike Training Club | Full-bleed session storytelling; black/white foundation; bold condensed type; content over chrome |
+| Nike Run Club | Glanceable live metrics; one decisive primary action; calm surfaces |
+| Strava | Data as narrative; single accent for “earned” signals; hairline structure; feed with varied density |
+| Strong / Hevy | Set table as the product; huge tap targets; rest after log |
 
-## Component principles
+## Identity: Setline v2
 
-1. Hierarchy over decoration — one primary action per viewport when training.
-2. Numbers are first-class — tabular numerals, clear units, no fake KPI wallpaper.
-3. Cards only when they group an interactive unit (e.g. start session).
-4. Workout UI optimized for chalky-hand, one-thumb use.
-5. Charts answer a question (volume trend, lift progression) — not ornament.
+- **Canvas:** cool light stone `#F2F3F5` (not pure white sheet)
+- **Ink:** near-black `#0B0B0C`
+- **Primary action:** solid black (Nike clarity) — not a rainbow of colored buttons
+- **Signal accent:** volt `#B6F400` for live/complete/streak only
+- **Type:** *Oswald* (display) + *IBM Plex Sans* (UI, tabular nums)
+- **Imagery:** photographic training hero + clearly badged **TEMP MEDIA** exercise stills (Unsplash, demo only)
+- **Layout:** edge-to-edge session stage; rhythm track; one featured last session; compact metrics — not card stacks
+- **Mobile:** no fake status bar; `env(safe-area-inset-*)`; tab bar clears content
+
+Prototype-only. Sample data labeled throughout.
