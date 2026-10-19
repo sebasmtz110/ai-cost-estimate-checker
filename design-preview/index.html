@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Setline — Design Preview</title>
+  <meta name="description" content="Isolated high-fidelity fitness UI prototype. Not connected to production." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="preview-meta">
+      <h1>Setline · Design Preview</h1>
+      <p>Isolated prototype only. Production app files are untouched. Sample training data for layout review.</p>
+      <div class="badge-row">
+        <span class="badge">Light athletic</span>
+        <span class="badge">iPhone-first</span>
+        <span class="badge">No production data</span>
+      </div>
+    </header>
+
+    <div class="phone" aria-label="Setline prototype phone frame">
+      <div class="status-bar">
+        <span>9:41</span>
+        <span>●●● ▮</span>
+      </div>
+
+      <div class="screen-stack">
+        <!-- HOME -->
+        <section class="screen is-active" id="screen-home" data-screen="home" aria-label="Home">
+          <div class="top-row">
+            <div class="brand">Setline</div>
+            <div class="date-label">Mon · Oct 19</div>
+          </div>
+
+          <div class="hero-session">
+            <div class="hero-kicker">Today’s session</div>
+            <h2 class="hero-title">Upper Strength A</h2>
+            <p class="hero-sub">Bench focus · 6 movements · ~55 min</p>
+            <div class="hero-meta">
+              <div class="meta-item"><strong>18</strong><span>Sets planned</span></div>
+              <div class="meta-item"><strong>4</strong><span>Week streak</span></div>
+              <div class="meta-item"><strong>+2.5%</strong><span>Vol. vs last</span></div>
+            </div>
+            <button class="btn btn-primary" type="button" data-go="workout">Start session</button>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">This week</h3>
+              <span class="linkish">4 / 5 days</span>
+            </div>
+            <div class="consistency" aria-label="Training consistency">
+              <div class="day trained">M</div>
+              <div class="day trained">T</div>
+              <div class="day">W</div>
+              <div class="day trained">T</div>
+              <div class="day trained today">F</div>
+              <div class="day">S</div>
+              <div class="day">S</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">Recent</h3>
+              <button class="linkish" type="button" data-go="progress">History</button>
+            </div>
+            <ul class="list-plain">
+              <li class="session-row">
+                <div>
+                  <h3>Lower Strength B</h3>
+                  <p>Sat · 62 min · 22 sets</p>
+                </div>
+                <div class="stat-inline">18.4k<small>Volume kg</small></div>
+              </li>
+              <li class="session-row">
+                <div>
+                  <h3>Pull Hypertrophy</h3>
+                  <p>Thu · 48 min · 20 sets</p>
+                </div>
+                <div class="stat-inline">14.1k<small>Volume kg</small></div>
+              </li>
+              <li class="session-row">
+                <div>
+                  <h3>Upper Strength A</h3>
+                  <p>Tue · 54 min · 18 sets</p>
+                </div>
+                <div class="stat-inline">12.8k<small>Volume kg</small></div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">7-day snapshot</h3>
+            </div>
+            <div class="volume-strip">
+              <div><strong>45.3k</strong><span>Total volume</span></div>
+              <div><strong>78</strong><span>Working sets</span></div>
+              <div><strong>3</strong><span>PRs logged</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- WORKOUT -->
+        <section class="screen" id="screen-workout" data-screen="workout" aria-label="Workout">
+          <div class="wo-top">
+            <div>
+              <div class="date-label" style="margin-bottom:4px">In session</div>
+              <h2>Upper Strength A</h2>
+            </div>
+            <div class="wo-timers">
+              <div class="label">Duration</div>
+              <div class="elapsed" id="workout-elapsed">00:12:38</div>
+            </div>
+          </div>
+
+          <div class="rest-bar" id="rest-bar" aria-live="polite">
+            <div>
+              <div class="label" style="color:#bdbdbd">Rest</div>
+              <strong id="rest-clock">01:30</strong>
+            </div>
+            <div class="rest-actions">
+              <button type="button" id="rest-minus">−15s</button>
+              <button type="button" id="rest-skip">Skip</button>
+            </div>
+          </div>
+
+          <article class="exercise-block" data-ex="bench">
+            <div class="ex-head">
+              <div class="ex-art" aria-hidden="true">
+                <!-- Placeholder SVG: clean silhouette, not final asset -->
+                <svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2">
+                  <circle cx="32" cy="12" r="5"/>
+                  <path d="M20 24h24l-2 14H22L20 24z"/>
+                  <path d="M12 28h10M42 28h10"/>
+                  <path d="M24 38v14M40 38v14"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Barbell Bench Press</h3>
+                <p>Chest · Last: 80 kg × 6</p>
+              </div>
+            </div>
+            <table class="set-table">
+              <thead>
+                <tr><th>Set</th><th>kg</th><th>Reps</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr data-set>
+                  <td class="set-n">1</td>
+                  <td><input inputmode="decimal" value="80" aria-label="Weight set 1" /></td>
+                  <td><input inputmode="numeric" value="6" aria-label="Reps set 1" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set 1"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+                <tr data-set>
+                  <td class="set-n">2</td>
+                  <td><input inputmode="decimal" value="80" aria-label="Weight set 2" /></td>
+                  <td><input inputmode="numeric" value="6" aria-label="Reps set 2" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set 2"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+                <tr data-set>
+                  <td class="set-n">3</td>
+                  <td><input inputmode="decimal" value="82.5" aria-label="Weight set 3" /></td>
+                  <td><input inputmode="numeric" value="5" aria-label="Reps set 3" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set 3"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+                <tr data-set>
+                  <td class="set-n">4</td>
+                  <td><input inputmode="decimal" value="82.5" aria-label="Weight set 4" /></td>
+                  <td><input inputmode="numeric" value="5" aria-label="Reps set 4" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set 4"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="exercise-block" data-ex="row">
+            <div class="ex-head">
+              <div class="ex-art" aria-hidden="true">
+                <svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2">
+                  <circle cx="22" cy="14" r="5"/>
+                  <path d="M18 22c8 2 18 8 28 4"/>
+                  <path d="M20 24v18M28 28v16"/>
+                  <path d="M12 36h20"/>
+                </svg>
+              </div>
+              <div>
+                <h3>Chest-Supported Row</h3>
+                <p>Back · Last: 42.5 kg × 10</p>
+              </div>
+            </div>
+            <table class="set-table">
+              <thead>
+                <tr><th>Set</th><th>kg</th><th>Reps</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr data-set>
+                  <td class="set-n">1</td>
+                  <td><input inputmode="decimal" value="42.5" /></td>
+                  <td><input inputmode="numeric" value="10" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+                <tr data-set>
+                  <td class="set-n">2</td>
+                  <td><input inputmode="decimal" value="42.5" /></td>
+                  <td><input inputmode="numeric" value="10" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+                <tr data-set>
+                  <td class="set-n">3</td>
+                  <td><input inputmode="decimal" value="45" /></td>
+                  <td><input inputmode="numeric" value="8" /></td>
+                  <td><button class="set-check" type="button" aria-label="Complete set"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L19 7" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <div class="wo-footer-actions">
+            <button class="btn btn-ghost" type="button" data-go="home">End early</button>
+            <button class="btn btn-primary" type="button" data-go="progress" style="margin-top:0">Finish</button>
+          </div>
+          <p class="placeholder-note">Exercise art: temporary SVG silhouettes to show intended consistency — not final illustrations/animations.</p>
+        </section>
+
+        <!-- LIBRARY -->
+        <section class="screen" id="screen-library" data-screen="library" aria-label="Exercise library">
+          <div class="top-row">
+            <div class="brand" style="font-size:1.45rem">Library</div>
+          </div>
+
+          <div class="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a988f" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input id="exercise-search" type="search" placeholder="Search exercises" autocomplete="off" />
+          </div>
+
+          <div class="chips" id="muscle-chips" role="tablist" aria-label="Muscle group">
+            <button class="chip is-on" type="button" data-filter="all">All</button>
+            <button class="chip" type="button" data-filter="chest">Chest</button>
+            <button class="chip" type="button" data-filter="back">Back</button>
+            <button class="chip" type="button" data-filter="legs">Legs</button>
+            <button class="chip" type="button" data-filter="shoulders">Shoulders</button>
+          </div>
+
+          <ul class="list-plain" id="exercise-list">
+            <li class="exercise-row" data-muscle="chest" data-name="Barbell Bench Press" data-equip="Barbell">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><circle cx="32" cy="12" r="5"/><path d="M20 24h24l-2 14H22L20 24z"/><path d="M12 28h10M42 28h10"/></svg></div>
+              <div><h3>Barbell Bench Press</h3><p>Chest · Barbell</p></div>
+              <span class="chev">›</span>
+            </li>
+            <li class="exercise-row" data-muscle="back" data-name="Chest-Supported Row" data-equip="Dumbbell">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><circle cx="22" cy="14" r="5"/><path d="M18 22c8 2 18 8 28 4"/><path d="M12 36h20"/></svg></div>
+              <div><h3>Chest-Supported Row</h3><p>Back · Dumbbell</p></div>
+              <span class="chev">›</span>
+            </li>
+            <li class="exercise-row" data-muscle="legs" data-name="Back Squat" data-equip="Barbell">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><circle cx="32" cy="10" r="5"/><path d="M32 16v14"/><path d="M20 30h24"/><path d="M24 30l-4 22M40 30l4 22"/></svg></div>
+              <div><h3>Back Squat</h3><p>Legs · Barbell</p></div>
+              <span class="chev">›</span>
+            </li>
+            <li class="exercise-row" data-muscle="shoulders" data-name="Seated Dumbbell Press" data-equip="Dumbbell">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><circle cx="32" cy="14" r="5"/><path d="M24 24h16v16H24z"/><path d="M16 22h8M40 22h8"/></svg></div>
+              <div><h3>Seated Dumbbell Press</h3><p>Shoulders · Dumbbell</p></div>
+              <span class="chev">›</span>
+            </li>
+            <li class="exercise-row" data-muscle="back" data-name="Lat Pulldown" data-equip="Cable">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><path d="M16 12h32"/><path d="M32 12v10"/><circle cx="32" cy="28" r="5"/><path d="M20 40l12-6 12 6"/><path d="M24 48h16"/></svg></div>
+              <div><h3>Lat Pulldown</h3><p>Back · Cable</p></div>
+              <span class="chev">›</span>
+            </li>
+            <li class="exercise-row" data-muscle="chest" data-name="Incline Dumbbell Press" data-equip="Dumbbell">
+              <div class="thumb"><svg viewBox="0 0 64 64" fill="none" stroke="#121212" stroke-width="2"><circle cx="28" cy="14" r="5"/><path d="M18 26l20 8-4 12-20-8z"/><path d="M40 30h12"/></svg></div>
+              <div><h3>Incline Dumbbell Press</h3><p>Chest · Dumbbell</p></div>
+              <span class="chev">›</span>
+            </li>
+          </ul>
+
+          <div class="detail-sheet" id="exercise-detail" aria-hidden="true">
+            <button class="close" type="button" id="detail-close" aria-label="Close">×</button>
+            <div class="detail-hero" id="detail-art"></div>
+            <h2 id="detail-title">Exercise</h2>
+            <div class="detail-tags">
+              <span id="detail-muscle">—</span>
+              <span>·</span>
+              <span id="detail-equip">—</span>
+            </div>
+            <p class="body" id="detail-body">Keep the torso braced, control the eccentric, and finish each rep with a full lockout without losing shoulder position.</p>
+            <p class="placeholder-note">Placeholder detail copy + SVG art. Replace with production cues and consistent exercise media later.</p>
+            <button class="btn btn-primary" type="button" data-go="workout">Add to workout</button>
+          </div>
+        </section>
+
+        <!-- PROGRESS -->
+        <section class="screen" id="screen-progress" data-screen="progress" aria-label="Progress">
+          <div class="top-row">
+            <div class="brand" style="font-size:1.45rem">Progress</div>
+            <div class="date-label">Sample data</div>
+          </div>
+
+          <div class="chart-panel">
+            <h3>Weekly volume</h3>
+            <p class="caption">Working volume (kg × reps) — synthetic</p>
+            <div class="bars" aria-hidden="true">
+              <div class="bar" style="height:48%"><span>W1</span></div>
+              <div class="bar" style="height:62%"><span>W2</span></div>
+              <div class="bar" style="height:55%"><span>W3</span></div>
+              <div class="bar is-peak" style="height:88%"><span>W4</span></div>
+              <div class="bar" style="height:72%"><span>W5</span></div>
+              <div class="bar" style="height:80%"><span>W6</span></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">Bench progression</h3>
+              <span class="linkish">Top set kg</span>
+            </div>
+            <svg class="chart" viewBox="0 0 320 140" role="img" aria-label="Bench press progression chart">
+              <line x1="20" y1="120" x2="300" y2="120" stroke="#e6e4df" />
+              <line x1="20" y1="20" x2="20" y2="120" stroke="#e6e4df" />
+              <polyline fill="none" stroke="#e23a1b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"
+                points="40,96 90,88 140,78 190,70 240,58 280,46" />
+              <g fill="#e23a1b">
+                <circle cx="40" cy="96" r="4"/><circle cx="90" cy="88" r="4"/><circle cx="140" cy="78" r="4"/>
+                <circle cx="190" cy="70" r="4"/><circle cx="240" cy="58" r="4"/><circle cx="280" cy="46" r="4"/>
+              </g>
+              <text x="280" y="34" text-anchor="end" font-size="12" font-family="Archivo Narrow, sans-serif" font-weight="700" fill="#121212">82.5 kg</text>
+            </svg>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">Personal records</h3>
+            </div>
+            <div class="pr-row"><div><strong>Back Squat</strong><br/><span>Estimated 1RM</span></div><strong>142.5 kg</strong></div>
+            <div class="pr-row"><div><strong>Bench Press</strong><br/><span>Best set · Oct 12</span></div><strong>82.5 × 5</strong></div>
+            <div class="pr-row"><div><strong>Deadlift</strong><br/><span>Best set · Oct 5</span></div><strong>170 × 3</strong></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3 class="section-title">Workout history</h3>
+            </div>
+            <ul class="list-plain">
+              <li class="history-row">
+                <div><h3>Upper Strength A</h3><p>Oct 14 · 54 min</p></div>
+                <div class="stat-inline">12.8k<small>kg vol</small></div>
+              </li>
+              <li class="history-row">
+                <div><h3>Lower Strength B</h3><p>Oct 12 · 62 min</p></div>
+                <div class="stat-inline">18.4k<small>kg vol</small></div>
+              </li>
+              <li class="history-row">
+                <div><h3>Pull Hypertrophy</h3><p>Oct 10 · 48 min</p></div>
+                <div class="stat-inline">14.1k<small>kg vol</small></div>
+              </li>
+              <li class="history-row">
+                <div><h3>Push Volume</h3><p>Oct 8 · 51 min</p></div>
+                <div class="stat-inline">13.2k<small>kg vol</small></div>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <nav class="tabbar" aria-label="Primary">
+        <button class="tab is-on" type="button" data-go="home">
+          <svg viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/></svg>
+          Home
+        </button>
+        <button class="tab" type="button" data-go="workout">
+          <svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/><path d="M3 10h4M17 10h4M3 14h4M17 14h4"/></svg>
+          Workout
+        </button>
+        <button class="tab" type="button" data-go="library">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          Library
+        </button>
+        <button class="tab" type="button" data-go="progress">
+          <svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg>
+          Progress
+        </button>
+      </nav>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
